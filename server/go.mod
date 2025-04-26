@@ -1,4 +1,4 @@
-module github.com/elltja/go-project-starter
+module github.com/elltja/finance-tracker
 
 go 1.23.5
 
