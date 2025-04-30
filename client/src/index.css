@@ -1,6 +1,9 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @theme {
+  --color-primary: #43bf47;
   --color-bg: 255 255 255;
   --color-box: 255 255 255;
   --box-border: 229 231 235;
@@ -12,6 +15,7 @@
 
 .dark {
   --color-bg: 3 7 18;
+
   --color-box: 17 24 39;
   --box-border: 243 244 246 / 0.1;
   --box-sd: transparent;
