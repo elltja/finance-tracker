@@ -4,8 +4,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/elltja/go-project-starter/internal/database"
-	"github.com/elltja/go-project-starter/internal/server"
+	"github.com/elltja/finance-tracker/internal/database"
+	"github.com/elltja/finance-tracker/internal/server"
 	"github.com/joho/godotenv"
 )
 

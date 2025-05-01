@@ -1,8 +1,11 @@
-import React from "react";
-import SignInForm from "./SignInForm";
-import SignUpForm from "./SignUpForm";
 import usePersistentState from "@/hooks/usePersistentState";
 import OAuth from "./OAuth";
+import Separator from "./Separator";
+import TabButton from "./TabButton";
+import React, { startTransition, Suspense } from "react";
+
+const SignInForm = React.lazy(() => import("./SignInForm"));
+const SignUpForm = React.lazy(() => import("./SignUpForm"));
 
 const TAB_STORAGE_KEY = "tab";
 
@@ -12,45 +15,34 @@ export default function AuthBox() {
     TAB_STORAGE_KEY
   );
   return (
-    <div className="w-full max-w-[500px] h-fit flex flex-col gap-3">
-      <div className="w-full flex text-lg">
-        <TabButton isActive={tab === "signin"} onClick={() => setTab("signin")}>
+    <main className="w-full max-w-[500px] h-fit flex flex-col gap-3">
+      <header className="w-full flex text-lg">
+        <TabButton
+          isActive={tab === "signin"}
+          onClick={() => startTransition(() => setTab("signin"))}
+        >
           Sign In
         </TabButton>
-        <TabButton isActive={tab === "signup"} onClick={() => setTab("signup")}>
+        <TabButton
+          isActive={tab === "signup"}
+          onClick={() => startTransition(() => setTab("signup"))}
+        >
           Sign Up
         </TabButton>
-      </div>
-      <div className="h-fit">
-        {tab === "signin" ? <SignInForm /> : <SignUpForm />}
-      </div>
-      <div className="flex items-center gap-5">
-        <hr className="border-gray-300 flex-1" />
-        <p className="text-lg text-gray-700">or</p>
-        <hr className="border-gray-300 flex-1" />
-      </div>
-      <OAuth />
-    </div>
-  );
-}
-
-function TabButton({
-  onClick,
-  isActive,
-  children,
-}: {
-  onClick: () => void;
-  isActive: boolean;
-  children: Readonly<React.ReactNode>;
-}) {
-  return (
-    <button
-      className={`flex-1 px-4 py-2 cursor-pointer hover:bg-gray-50 border-b ${
-        isActive ? "border-gray-700" : "border-gray-300"
-      }`}
-      onClick={onClick}
-    >
-      {children}
-    </button>
+      </header>
+      <section className="h-fit">
+        <Suspense
+          fallback={
+            <div className="text-sm text-gray-500">Loading form...</div>
+          }
+        >
+          {tab === "signin" ? <SignInForm /> : <SignUpForm />}
+        </Suspense>
+      </section>
+      <Separator />
+      <section>
+        <OAuth />
+      </section>
+    </main>
   );
 }
