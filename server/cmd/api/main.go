@@ -25,7 +25,7 @@ func main() {
 	}
 
 	log.Printf("Starting server on port %s...", port)
-	if err := s.Run(":" + port); err != nil {
+	if err := s.ListenAndServe(); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
 }
