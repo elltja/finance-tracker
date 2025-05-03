@@ -2,11 +2,23 @@ import { Lock, Mail } from "lucide-react";
 import { useId } from "react";
 import FormInput from "../form/FormInput";
 import SubmitButton from "../form/SubmitButton";
+import { SubmitHandler, useForm } from "react-hook-form";
+
+type FormFields = {
+  email: string;
+  password: string;
+};
 
 export default function SignInForm() {
   const id = useId();
+  const { register, handleSubmit } = useForm<FormFields>();
+
+  const onSubmit: SubmitHandler<FormFields> = (data) => {
+    console.log(data);
+  };
+
   return (
-    <form className="flex flex-col gap-4">
+    <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col">
         <label htmlFor={`email-${id}`} className="">
           Email
@@ -14,10 +26,9 @@ export default function SignInForm() {
         <FormInput
           Icon={Mail}
           type="email"
-          name="email"
           id={`email-${id}`}
           placeholder="you@example.com"
-          className="py-2 px-3 outline-none border border-gray-300 rounded-sm"
+          {...register("email")}
         />
       </div>
       <div className="flex flex-col">
@@ -25,10 +36,9 @@ export default function SignInForm() {
         <FormInput
           Icon={Lock}
           type="password"
-          name="password"
           id={`password-${id}`}
           placeholder="••••••••"
-          className="py-2 px-3 outline-none border border-gray-300 rounded-sm"
+          {...register("password")}
         />
       </div>
       <SubmitButton>Sign In</SubmitButton>

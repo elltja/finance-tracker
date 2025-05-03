@@ -15,7 +15,6 @@ export default function SignUpForm() {
           name="name"
           id={`name-${id}`}
           placeholder="Your full name"
-          className="py-2 px-3 outline-none border border-gray-300 rounded-sm"
         />
       </div>
       <div className="flex flex-col">
@@ -28,7 +27,6 @@ export default function SignUpForm() {
           name="email"
           id={`email-${id}`}
           placeholder="you@example.com"
-          className="py-2 px-3 outline-none border border-gray-300 rounded-sm"
         />
       </div>
       <div className="flex flex-col">
@@ -39,7 +37,6 @@ export default function SignUpForm() {
           name="password"
           id={`password-${id}`}
           placeholder="••••••••"
-          className="py-2 px-3 outline-none border border-gray-300 rounded-sm"
         />
       </div>
       <SubmitButton>Sign Up</SubmitButton>
