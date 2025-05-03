@@ -33,7 +33,7 @@ func RegisterRoutes() *gin.Engine {
 	auth := r.Group("/auth")
 	{
 		auth.POST("/register", RegisterHandler)
-		auth.POST("/login")
+		auth.POST("/login", LoginHandler)
 	}
 
 	return r
