@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/elltja/finance-tracker/internal/database"
@@ -12,17 +13,17 @@ func Register(credentials models.RegisterCredentials) error {
 	existingUser, err := database.GetUserByEmail(credentials.Email)
 
 	if err != nil {
-		fmt.Println("Error getting user")
+		fmt.Println("Error getting user", err)
 		return err
 	}
 
 	if existingUser != nil {
-		return fmt.Errorf("user already exist")
+		return ErrUserAlreadyExit
 	}
 
 	passwordHash, err := HashPassword(credentials.Password)
 	if err != nil {
-		fmt.Println("Error hashing password")
+		fmt.Println("Error hashing password", err)
 		return err
 	}
 
@@ -32,9 +33,7 @@ func Register(credentials models.RegisterCredentials) error {
 		Name:     credentials.Name,
 	}
 
-	err = database.CreateUser(newUser)
-
-	if err != nil {
+	if err := database.CreateUser(newUser); err != nil {
 		fmt.Println("Error creating user")
 		return err
 	}
@@ -49,17 +48,19 @@ func Login(credentials models.LoginCredentials) error {
 
 	if err != nil {
 		fmt.Println("Error getting user", err)
-		return err
+		return errors.New("error getting user")
+	}
+
+	if existingUser == nil {
+		return ErrUserNotFound
 	}
 
 	if !existingUser.HashedPassword.Valid {
-		return fmt.Errorf("user does not have a password")
+		return ErrNoPassword
 	}
 
-	err = ComparePasswords(existingUser.HashedPassword.String, credentials.Password)
-
-	if err != nil {
-		return err
+	if err := ComparePasswords(existingUser.HashedPassword.String, credentials.Password); err != nil {
+		return ErrInvalidPassword
 	}
 
 	// TODO: Create session

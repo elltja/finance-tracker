@@ -1,6 +1,7 @@
 package server
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/elltja/finance-tracker/internal/auth"
@@ -20,9 +21,13 @@ func RegisterHandler(ctx *gin.Context) {
 
 	err := auth.Register(credentials)
 
-	// TODO: Improve error handling
-
 	if err != nil {
+		if errors.Is(err, auth.ErrUserAlreadyExit) {
+			ctx.JSON(http.StatusInternalServerError, gin.H{
+				"message": "User already exist",
+			})
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Internal server error",
 		})
@@ -45,9 +50,25 @@ func LoginHandler(ctx *gin.Context) {
 
 	err := auth.Login(credentials)
 
-	// TODO: Improve error handling
-
 	if err != nil {
+		if errors.Is(err, auth.ErrUserNotFound) {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "User does not exist",
+			})
+			return
+		}
+		if errors.Is(err, auth.ErrNoPassword) {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "User does not have a password",
+			})
+			return
+		}
+		if errors.Is(err, auth.ErrInvalidPassword) {
+			ctx.JSON(http.StatusBadRequest, gin.H{
+				"message": "Invalid password",
+			})
+			return
+		}
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Internal server error",
 		})
