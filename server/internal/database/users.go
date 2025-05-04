@@ -26,3 +26,11 @@ func CreateUser(credentials models.RegisterCredentials) error {
 	}
 	return nil
 }
+
+func CreateOAuthUser(credentials models.OAuthCredentials) error {
+	_, err := DB.Exec(`INSERT INTO users (name, email, provider, provider_id) VALUES ($1, $2, $3, $4)`, credentials.Name, credentials.Email, credentials.Provider, credentials.ProviderId)
+	if err != nil {
+		return err
+	}
+	return nil
+}

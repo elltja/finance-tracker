@@ -34,6 +34,8 @@ func RegisterRoutes() *gin.Engine {
 	{
 		auth.POST("/register", RegisterHandler)
 		auth.POST("/login", LoginHandler)
+		auth.GET("/:provider", OAuthHandler)
+		auth.GET("/:provider/callback", OAuthCallbackHandler)
 	}
 
 	return r
