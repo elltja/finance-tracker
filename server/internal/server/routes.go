@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/elltja/finance-tracker/internal/auth"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -30,12 +31,13 @@ func RegisterRoutes() *gin.Engine {
 	})
 
 	/* Auth */
-	auth := r.Group("/auth")
+	authRoutes := r.Group("/auth")
 	{
-		auth.POST("/register", RegisterHandler)
-		auth.POST("/login", LoginHandler)
-		auth.GET("/:provider", OAuthHandler)
-		auth.GET("/:provider/callback", OAuthCallbackHandler)
+		authRoutes.POST("/register", auth.RegisterHandler)
+		authRoutes.POST("/login", auth.LoginHandler)
+		authRoutes.GET("/:provider", auth.OAuthHandler)
+		authRoutes.GET("/:provider/callback", auth.OAuthCallbackHandler)
+		authRoutes.GET("/me") // TODO
 	}
 
 	return r
