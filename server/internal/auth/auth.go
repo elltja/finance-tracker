@@ -3,12 +3,27 @@ package auth
 import (
 	"errors"
 	"fmt"
+	"net/http"
+	"os"
 
 	"github.com/elltja/finance-tracker/internal/database"
 	"github.com/elltja/finance-tracker/internal/models"
+	"github.com/gorilla/sessions"
 )
 
-func Register(credentials models.RegisterCredentials) error {
+const isProd = false
+
+var Store = sessions.NewCookieStore([]byte(os.Getenv("SESSION_KEY")))
+
+func init() {
+	Store.Options.Path = "/"
+	Store.Options.HttpOnly = true
+	Store.Options.Secure = isProd
+}
+
+const cookieSessionKey = "session-id"
+
+func Register(r *http.Request, w http.ResponseWriter, credentials models.RegisterCredentials) error {
 
 	existingUser, err := database.GetUserByEmail(credentials.Email)
 
@@ -33,17 +48,23 @@ func Register(credentials models.RegisterCredentials) error {
 		Name:     credentials.Name,
 	}
 
-	if err := database.CreateUser(newUser); err != nil {
+	user, err := database.CreateUser(newUser)
+
+	if err != nil {
 		fmt.Println("Error creating user")
 		return err
 	}
 
-	// TODO: Create session
+	session, _ := Store.Get(r, cookieSessionKey)
+
+	session.Values["user_id"] = user.Id
+
+	session.Save(r, w)
 
 	return nil
 }
 
-func Login(credentials models.LoginCredentials) error {
+func Login(r *http.Request, w http.ResponseWriter, credentials models.LoginCredentials) error {
 	existingUser, err := database.GetUserByEmail(credentials.Email)
 
 	if err != nil {
@@ -63,7 +84,11 @@ func Login(credentials models.LoginCredentials) error {
 		return ErrInvalidPassword
 	}
 
-	// TODO: Create session
+	session, _ := Store.Get(r, cookieSessionKey)
+
+	session.Values["user_id"] = existingUser.Id
+
+	session.Save(r, w)
 
 	return nil
 

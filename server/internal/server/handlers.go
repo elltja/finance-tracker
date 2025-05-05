@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/elltja/finance-tracker/internal/auth"
-	"github.com/elltja/finance-tracker/internal/database"
 	"github.com/elltja/finance-tracker/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/markbates/goth/gothic"
@@ -23,7 +22,7 @@ func RegisterHandler(ctx *gin.Context) {
 		return
 	}
 
-	err := auth.Register(credentials)
+	err := auth.Register(ctx.Request, ctx.Writer, credentials)
 
 	if err != nil {
 		if errors.Is(err, auth.ErrUserAlreadyExit) {
@@ -52,7 +51,7 @@ func LoginHandler(ctx *gin.Context) {
 		return
 	}
 
-	err := auth.Login(credentials)
+	err := auth.Login(ctx.Request, ctx.Writer, credentials)
 
 	if err != nil {
 		if errors.Is(err, auth.ErrUserNotFound) {
@@ -104,21 +103,14 @@ func OAuthCallbackHandler(ctx *gin.Context) {
 	}
 
 	frontEndUrl := os.Getenv("FRONTEND_URL")
-	name := user.Name
-	if name == "" {
-		name = user.NickName
-	}
-	if err = database.CreateOAuthUser(models.OAuthCredentials{
-		Name:       name,
-		Email:      user.Email,
-		Provider:   user.Provider,
-		ProviderId: user.UserID,
-	}); err != nil {
-		fmt.Println("Error: ", err)
-		http.Redirect(ctx.Writer, ctx.Request, fmt.Sprintf("%s/", frontEndUrl), http.StatusInternalServerError)
+
+	if err = auth.RegisterOAuth(ctx.Request, ctx.Writer, user); err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Internal server error",
+		})
 		return
 	}
 
 	fmt.Println("Frontend url: ", frontEndUrl)
-	http.Redirect(ctx.Writer, ctx.Request, fmt.Sprintf("%s/", frontEndUrl), http.StatusFound)
+	ctx.Redirect(http.StatusFound, frontEndUrl)
 }
