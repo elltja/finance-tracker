@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/elltja/finance-tracker/internal/auth"
 	"github.com/elltja/finance-tracker/internal/database"
 	"github.com/elltja/finance-tracker/internal/server"
 	"github.com/joho/godotenv"
@@ -16,6 +17,8 @@ func main() {
 
 	database.Init()
 	defer database.DB.Close()
+
+	auth.NewAuth()
 
 	s := server.NewServer()
 
