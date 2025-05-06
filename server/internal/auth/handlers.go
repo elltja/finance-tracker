@@ -21,7 +21,7 @@ func RegisterHandler(ctx *gin.Context) {
 		return
 	}
 
-	existingUser, err := database.GetUserByEmail(credentials.Email)
+	existingUser, err := database.FindUserForAuth(credentials.Email)
 
 	if err != nil {
 		fmt.Println("Error getting user", err)
@@ -94,7 +94,7 @@ func LoginHandler(ctx *gin.Context) {
 		return
 	}
 
-	existingUser, err := database.GetUserByEmail(credentials.Email)
+	existingUser, err := database.FindUserForAuth(credentials.Email)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -162,7 +162,7 @@ func OAuthCallbackHandler(ctx *gin.Context) {
 
 	frontEndUrl := os.Getenv("FRONTEND_URL")
 
-	existingUser, err := database.GetUserByEmail(gothUser.Email)
+	existingUser, err := database.FindUserForAuth(gothUser.Email)
 
 	if err != nil {
 		fmt.Println("Error getting user", err)
@@ -212,4 +212,27 @@ func OAuthCallbackHandler(ctx *gin.Context) {
 
 	fmt.Println("Frontend url: ", frontEndUrl)
 	ctx.Redirect(http.StatusFound, frontEndUrl)
+}
+
+func MeHandler(ctx *gin.Context) {
+	session, _ := Store.Get(ctx.Request, CookieSessionKey)
+
+	userId, ok := session.Values["user_id"].(string)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Invalid session data",
+		})
+		return
+	}
+
+	user, err := database.GetUser(userId)
+
+	if err != nil {
+		fmt.Println("Error getting user: ", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Internal server error",
+		})
+		return
+	}
+	ctx.JSON(http.StatusOK, user)
 }

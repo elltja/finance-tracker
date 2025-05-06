@@ -6,7 +6,7 @@ import (
 	"github.com/elltja/finance-tracker/internal/models"
 )
 
-func GetUserByEmail(email string) (*models.User, error) {
+func FindUserForAuth(email string) (*models.User, error) {
 	row := DB.QueryRow(`SELECT id, name, email, password_hash, provider, provider_id, created_at FROM users WHERE email = $1`, email)
 	var user models.User
 
@@ -14,6 +14,15 @@ func GetUserByEmail(email string) (*models.User, error) {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
+		return nil, err
+	}
+	return &user, nil
+}
+
+func GetUser(id string) (*models.PublicUser, error) {
+	row := DB.QueryRow(`SELECT id, name, email, created_at FROM users WHERE id = $1`, id)
+	var user models.PublicUser
+	if err := row.Scan(&user.Id, &user.Name, &user.Email, &user.CreatedAt); err != nil {
 		return nil, err
 	}
 	return &user, nil

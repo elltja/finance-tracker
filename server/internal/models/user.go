@@ -14,3 +14,10 @@ type User struct {
 	ProviderId     sql.NullString `json:"provider_id"`
 	CreatedAt      time.Time      `json:"created_at"`
 }
+
+type PublicUser struct {
+	Id        string    `json:"id"`
+	Name      string    `json:"name"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+}
