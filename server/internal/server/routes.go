@@ -37,7 +37,7 @@ func RegisterRoutes() *gin.Engine {
 		authRoutes.POST("/login", auth.LoginHandler)
 		authRoutes.GET("/:provider", auth.OAuthHandler)
 		authRoutes.GET("/:provider/callback", auth.OAuthCallbackHandler)
-		authRoutes.GET("/me", auth.MeHandler) // TODO
+		authRoutes.GET("/me", auth.MeHandler)
 	}
 
 	return r
