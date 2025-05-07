@@ -219,8 +219,8 @@ func MeHandler(ctx *gin.Context) {
 
 	userId, ok := session.Values["user_id"].(string)
 	if !ok {
-		ctx.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Invalid session data",
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"message": "Unauthorized",
 		})
 		return
 	}
