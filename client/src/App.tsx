@@ -6,16 +6,12 @@ const Auth = React.lazy(() => import("@/pages/Auth"));
 const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
 
 export default function App() {
+  const user = useAuth();
   return (
     <>
       <Suspense fallback={<Loading />}>
-        <SuspendedApp />
+        {user ? <Dashboard /> : <Auth />}
       </Suspense>
     </>
   );
-}
-
-function SuspendedApp() {
-  const user = useAuth();
-  return user ? <Dashboard /> : <Auth />;
 }

@@ -3,6 +3,9 @@ import { useId } from "react";
 import FormInput from "../form/FormInput";
 import SubmitButton from "../form/SubmitButton";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+const API_URL = `${import.meta.env.VITE_BACKEND_URL}/auth/login`;
 
 type FormFields = {
   email: string;
@@ -12,9 +15,27 @@ type FormFields = {
 export default function SignInForm() {
   const id = useId();
   const { register, handleSubmit } = useForm<FormFields>();
+  const queryClient = useQueryClient();
+  const { mutate } = useMutation({
+    mutationFn: async (data: FormFields) => {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+      const result = await res.json();
+      console.log(result);
+    },
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["user"] });
+    },
+  });
 
-  const onSubmit: SubmitHandler<FormFields> = (data) => {
-    console.log(data);
+  const onSubmit: SubmitHandler<FormFields> = async (data) => {
+    mutate(data);
   };
 
   return (

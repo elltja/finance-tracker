@@ -1,14 +1,25 @@
 import { User } from "@/types/user";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import React, { useContext } from "react";
 
-const AuthContext = React.createContext<User | undefined>(undefined);
+const AuthContext = React.createContext<User | null>(null);
 
-async function fetchUser() {
-  const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/me`, {
+const API_URL = `${import.meta.env.VITE_BACKEND_URL}/auth/me`;
+
+async function fetchUser(): Promise<User | null> {
+  const res = await fetch(API_URL, {
     credentials: "include",
   });
-  return res.json() as Promise<User>;
+
+  if (res.status === 401) {
+    return null;
+  }
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch user: ${res.statusText}`);
+  }
+
+  return res.json();
 }
 
 export default function AuthProvider({
@@ -16,11 +27,16 @@ export default function AuthProvider({
 }: {
   children: Readonly<React.ReactNode>;
 }) {
-  const { data } = useSuspenseQuery({
+  const { data } = useQuery<User | null>({
     queryKey: ["user"],
     queryFn: fetchUser,
+    retry: false,
   });
-  return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;
+  console.log({ data });
+
+  return (
+    <AuthContext.Provider value={data ?? null}>{children}</AuthContext.Provider>
+  );
 }
 
 export const useAuth = () => {
