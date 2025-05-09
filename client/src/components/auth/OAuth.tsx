@@ -8,7 +8,10 @@ export default function OAuth() {
   }
   return (
     <div className="h-fit flex flex-col gap-3">
-      <button className="p-2 rounded-md cursor-pointer border border-gray-300 w-full flex justify-center gap-3">
+      <button
+        className="p-2 rounded-md cursor-pointer border border-gray-300 w-full flex justify-center gap-3"
+        onClick={() => handleOAuthLogin("google")}
+      >
         <img src="/google.png" alt="Google's logo" className="w-5 h-5" />
         Continue with Google
       </button>

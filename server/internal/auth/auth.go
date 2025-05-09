@@ -9,6 +9,7 @@ import (
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/github"
+	"github.com/markbates/goth/providers/google"
 )
 
 const (
@@ -48,8 +49,16 @@ func initOAuthProviders() {
 
 	githubClientId := os.Getenv("GITHUB_CLIENT_ID")
 	githubClientSecret := os.Getenv("GITHUB_CLIENT_SECRET")
+
 	if githubClientId == "" || githubClientSecret == "" {
 		log.Fatal("GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET environment variables are required")
+	}
+
+	googleClientId := os.Getenv("GOOGLE_CLIENT_ID")
+	googleClientSecret := os.Getenv("GOOGLE_CLIENT_SECRET")
+
+	if googleClientId == "" || googleClientSecret == "" {
+		log.Fatal("GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables are required")
 	}
 
 	goth.UseProviders(
@@ -58,6 +67,11 @@ func initOAuthProviders() {
 			githubClientSecret,
 			fmt.Sprintf("%s/auth/github/callback", baseUrl),
 			"user:email",
+		),
+		google.New(
+			googleClientId,
+			googleClientSecret,
+			fmt.Sprintf("%s/auth/google/callback", baseUrl),
 		),
 	)
 }

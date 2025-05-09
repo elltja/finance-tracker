@@ -11,9 +11,14 @@ export default function TabButton({
 }) {
   return (
     <button
-      className={`flex-1 px-4 py-2 cursor-pointer hover:bg-gray-50 border-b ${
-        isActive ? "border-gray-700" : "border-gray-300"
-      }`}
+      className={`flex-1 px-4 py-2 cursor-pointer 
+        hover:bg-gray-50 dark:hover:bg-gray-800 
+        border-b 
+        ${
+          isActive
+            ? "border-gray-700 dark:border-gray-200"
+            : "border-gray-300 dark:border-gray-600"
+        }`}
       onClick={onClick}
     >
       {children}
