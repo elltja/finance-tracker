@@ -1,9 +1,9 @@
 import { Lock, Mail } from "lucide-react";
 import { useId } from "react";
-import FormInput from "../form/FormInput";
-import SubmitButton from "../form/SubmitButton";
+import FormInput from "../shared/FormInput";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Button from "../shared/Button";
 
 const API_URL = `${import.meta.env.VITE_BACKEND_URL}/auth/login`;
 
@@ -12,12 +12,14 @@ type FormFields = {
   password: string;
 };
 
+type FormResult = { message: string; isError: boolean };
+
 export default function SignInForm() {
   const id = useId();
   const { register, handleSubmit } = useForm<FormFields>();
   const queryClient = useQueryClient();
-  const { mutate } = useMutation({
-    mutationFn: async (data: FormFields) => {
+  const { mutate, data } = useMutation<FormResult, unknown, FormFields>({
+    mutationFn: async (data: FormFields): Promise<FormResult> => {
       const res = await fetch(API_URL, {
         method: "POST",
         body: JSON.stringify(data),
@@ -26,8 +28,8 @@ export default function SignInForm() {
         },
         credentials: "include",
       });
-      const result = await res.json();
-      console.log(result);
+      const result = (await res.json()) as { message: string };
+      return { ...result, isError: !res.ok };
     },
     onSuccess: () => {
       queryClient.refetchQueries({ queryKey: ["user"] });
@@ -62,7 +64,12 @@ export default function SignInForm() {
           {...register("password")}
         />
       </div>
-      <SubmitButton>Sign In</SubmitButton>
+      {data?.isError && (
+        <p aria-live="polite" className="text-red-600">
+          {data.message}
+        </p>
+      )}
+      <Button>Sign In</Button>
     </form>
   );
 }

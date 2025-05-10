@@ -9,7 +9,7 @@ const SignUpForm = React.lazy(() => import("./SignUpForm"));
 
 const TAB_STORAGE_KEY = "tab";
 
-export default function AuthBox() {
+export default function AuthTabs() {
   const [tab, setTab] = usePersistentState<"signin" | "signup">(
     "signin",
     TAB_STORAGE_KEY
