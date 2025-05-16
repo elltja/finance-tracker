@@ -1,14 +1,14 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import AuthTabs from "../auth/AuthTabs";
+import AuthTabs from "@/components/auth/AuthTabs";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 
-vi.doMock("../auth/SignInForm", () => ({
+vi.doMock("@/components/auth/SignInForm", () => ({
   default: () => <div>Mock SignInForm</div>,
 }));
 
-vi.doMock("../auth/SignUpForm", () => ({
+vi.doMock("@/components/auth/SignUpForm", () => ({
   default: () => <div>Mock SignUpForm</div>,
 }));
 

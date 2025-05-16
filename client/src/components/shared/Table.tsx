@@ -9,7 +9,7 @@ export function TableRow({ items, className = "" }: TableRowProps) {
       {items.map((item, index) => (
         <td
           key={index}
-          className={`py-2 ${
+          className={`p-2 ${
             index === items.length - 1 ? "text-right" : "text-left"
           }`}
         >
@@ -17,5 +17,18 @@ export function TableRow({ items, className = "" }: TableRowProps) {
         </td>
       ))}
     </tr>
+  );
+}
+
+interface TableHeadProps {
+  keys: string[];
+  className?: string;
+}
+
+export function TableHead({ keys, className }: TableHeadProps) {
+  return (
+    <thead className={className}>
+      <TableRow items={keys} className="font-bold" />
+    </thead>
   );
 }

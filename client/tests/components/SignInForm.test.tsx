@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
-import SignInForm from "../auth/SignInForm";
+import SignInForm from "@/components/auth/SignInForm";
 
 function renderForm() {
   const queryClient = new QueryClient();

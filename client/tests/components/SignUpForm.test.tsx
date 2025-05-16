@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi, Mock } from "vitest";
-import SignUpForm from "../auth/SignUpForm";
+import SignUpForm from "@/components/auth/SignUpForm";
 import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import userEvent from "@testing-library/user-event";

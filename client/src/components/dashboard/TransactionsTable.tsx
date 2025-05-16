@@ -1,4 +1,5 @@
-import { TableRow } from "../shared/Table";
+import { Transaction } from "@/types/transaction";
+import { TableHead, TableRow } from "../shared/Table";
 
 const data = [
   {
@@ -27,17 +28,26 @@ const data = [
   },
 ];
 
+const COLUMNS: (keyof Transaction)[] = [
+  "name",
+  "description",
+  "type",
+  "date",
+  "category",
+  "amount",
+];
+
 export default function TransactionsTable() {
   return (
-    <table className="table-fixed w-1/2">
-      <thead>
-        <TableRow items={Object.keys(data[0])} className="font-bold" />
-      </thead>
-      <tbody>
-        {data.map((item, index) => (
-          <TableRow key={index} items={Object.values(item)} />
-        ))}
-      </tbody>
-    </table>
+    <div className="overflow-x-auto">
+      <table className="table-fixed w-full max-w-screen min-w-[600px]">
+        <TableHead keys={COLUMNS} />
+        <tbody>
+          {data.map((item, index) => (
+            <TableRow key={index} items={COLUMNS.map((col) => item[col])} />
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
