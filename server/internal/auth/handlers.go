@@ -171,7 +171,7 @@ func OAuthCallbackHandler(ctx *gin.Context) {
 		})
 		return
 	}
-
+	fmt.Println(gothUser)
 	if existingUser == nil {
 		name := gothUser.Name
 		if name == "" {

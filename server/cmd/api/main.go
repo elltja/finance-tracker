@@ -18,7 +18,7 @@ func main() {
 	database.Init()
 	defer database.DB.Close()
 
-	auth.NewAuth()
+	auth.Init()
 
 	s := server.NewServer()
 

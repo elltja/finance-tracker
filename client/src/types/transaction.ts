@@ -1,8 +1,10 @@
+export type TransactionType = "fixed" | "recurring";
+
 export type Transaction = {
   name: string;
   description: string;
-  type: string;
+  type: TransactionType;
   date: string;
   category: string;
-  amount: string;
+  amount: number;
 };

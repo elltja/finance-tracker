@@ -1,3 +1,5 @@
+import { capitalize } from "@/utils/capitalize";
+
 interface TableRowProps {
   items: string[];
   className?: string;
@@ -28,7 +30,7 @@ interface TableHeadProps {
 export function TableHead({ keys, className }: TableHeadProps) {
   return (
     <thead className={className}>
-      <TableRow items={keys} className="font-bold" />
+      <TableRow items={keys.map((k) => capitalize(k))} className="font-bold" />
     </thead>
   );
 }

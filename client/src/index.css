@@ -4,12 +4,15 @@
 
 @theme {
   --color-primary: #43bf47;
+  --color-primary-hover: #3ba53e;
   --color-bg: #ffffff;
   --color-foreground: #000000;
+  --color-bg-hover: #eeeeee;
 }
 
 .dark {
   --color-bg: #0f0f10;
+  --color-bg-hover: #1f1f20;
   --color-foreground: #ffffff;
 }
 

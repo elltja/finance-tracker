@@ -20,7 +20,7 @@ var (
 	Store *sessions.CookieStore
 )
 
-func NewAuth() {
+func Init() {
 	sessionSecret := os.Getenv("SESSION_SECRET")
 	if sessionSecret == "" {
 		log.Fatal("SESSION_SECRET environment variable is required")
@@ -66,12 +66,13 @@ func initOAuthProviders() {
 			githubClientId,
 			githubClientSecret,
 			fmt.Sprintf("%s/auth/github/callback", baseUrl),
-			"user:email",
+			"user:email", "read:user",
 		),
 		google.New(
 			googleClientId,
 			googleClientSecret,
 			fmt.Sprintf("%s/auth/google/callback", baseUrl),
+			"profile", "email",
 		),
 	)
 }
