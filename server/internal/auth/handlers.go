@@ -6,13 +6,30 @@ import (
 	"os"
 
 	"github.com/elltja/finance-tracker/internal/database"
-	"github.com/elltja/finance-tracker/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/markbates/goth/gothic"
 )
 
+type RegisterCredentials struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type LoginCredentials struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type OAuthCredentials struct {
+	Name       string `json:"name"`
+	Email      string `json:"email"`
+	Provider   string `json:"provider"`
+	ProviderId string `json:"provider_id"`
+}
+
 func RegisterHandler(ctx *gin.Context) {
-	var credentials models.RegisterCredentials
+	var credentials RegisterCredentials
 
 	if err := ctx.ShouldBindJSON(&credentials); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -47,7 +64,7 @@ func RegisterHandler(ctx *gin.Context) {
 		return
 	}
 
-	newUser := models.RegisterCredentials{
+	newUser := RegisterCredentials{
 		Email:    credentials.Email,
 		Password: passwordHash,
 		Name:     credentials.Name,
@@ -86,7 +103,7 @@ func RegisterHandler(ctx *gin.Context) {
 }
 
 func LoginHandler(ctx *gin.Context) {
-	var credentials models.LoginCredentials
+	var credentials LoginCredentials
 	if err := ctx.ShouldBindJSON(&credentials); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
 			"message": "Invalid input data",
@@ -177,7 +194,7 @@ func OAuthCallbackHandler(ctx *gin.Context) {
 		if name == "" {
 			name = gothUser.NickName
 		}
-		user, err := database.CreateOAuthUser(models.OAuthCredentials{
+		user, err := database.CreateOAuthUser(OAuthCredentials{
 			Name:       name,
 			Email:      gothUser.Email,
 			Provider:   gothUser.Provider,

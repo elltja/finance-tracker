@@ -28,7 +28,11 @@ func GetUser(id string) (*models.PublicUser, error) {
 	return &user, nil
 }
 
-func CreateUser(credentials models.RegisterCredentials) (*models.User, error) {
+func CreateUser(credentials struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}) (*models.User, error) {
 	row := DB.QueryRow(
 		`INSERT INTO users (name, email, password_hash) 
 		 VALUES ($1, $2, $3) 
@@ -43,7 +47,12 @@ func CreateUser(credentials models.RegisterCredentials) (*models.User, error) {
 	return &user, nil
 }
 
-func CreateOAuthUser(credentials models.OAuthCredentials) (*models.User, error) {
+func CreateOAuthUser(credentials struct {
+	Name       string `json:"name"`
+	Email      string `json:"email"`
+	Provider   string `json:"provider"`
+	ProviderId string `json:"provider_id"`
+}) (*models.User, error) {
 	row := DB.QueryRow(
 		`INSERT INTO users (name, email, provider, provider_id) 
 		 VALUES ($1, $2, $3, $4) 
