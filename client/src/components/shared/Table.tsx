@@ -1,4 +1,5 @@
 import { capitalize } from "@/utils/capitalize";
+import clsx from "clsx";
 
 interface TableRowProps {
   items: string[];
@@ -7,7 +8,7 @@ interface TableRowProps {
 
 export function TableRow({ items, className = "" }: TableRowProps) {
   return (
-    <tr className={`border-b border-gray-300 hover:bg-gray-100 ${className}`}>
+    <tr className={clsx("border-b border-border", className)}>
       {items.map((item, index) => (
         <td
           key={index}

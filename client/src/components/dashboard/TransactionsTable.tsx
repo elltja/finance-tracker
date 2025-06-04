@@ -44,7 +44,11 @@ export default function TransactionsTable() {
         <TableHead keys={COLUMNS} />
         <tbody>
           {data.map((item, index) => (
-            <TableRow key={index} items={COLUMNS.map((col) => item[col])} />
+            <TableRow
+              key={index}
+              items={COLUMNS.map((col) => item[col])}
+              className="hover:bg-bg-hover"
+            />
           ))}
         </tbody>
       </table>

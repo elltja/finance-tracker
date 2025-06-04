@@ -15,7 +15,7 @@ export default function FormInput({
   return (
     <div>
       {label && <label htmlFor={id}>{label}</label>}
-      <div className="px-3 border border-gray-300 rounded-sm flex items-center gap-3">
+      <div className="px-3 border border-border rounded-sm flex items-center gap-3">
         <label htmlFor={id}>
           <Icon className="text-gray-500" size={20} />
         </label>

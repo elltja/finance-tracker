@@ -39,7 +39,7 @@ export function TransactionDialog({ isOpen, onClose }: TransactionDialogProps) {
       <div
         aria-modal="true"
         role="dialog"
-        className="relative z-50 mx-auto mt-40 w-full sm:w-2/3 lg:w-1/2 m-2 bg-white p-6 rounded shadow"
+        className="relative z-50 mx-auto mt-40 w-full sm:w-2/3 lg:w-1/2 m-2 bg-bg p-6 rounded shadow"
       >
         <header className="mb-2">
           <h2 className="font-semibold text-lg">Add transsaction</h2>

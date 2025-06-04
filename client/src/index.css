@@ -8,12 +8,14 @@
   --color-bg: #ffffff;
   --color-foreground: #000000;
   --color-bg-hover: #eeeeee;
+  --color-border: var(--color-gray-200);
 }
 
 .dark {
   --color-bg: #0f0f10;
   --color-bg-hover: #1f1f20;
-  --color-foreground: #ffffff;
+  --color-foreground: #bebebe;
+  --color-border: #bebebe;
 }
 
 @layer utilities {
@@ -23,4 +25,15 @@ body {
   font-family: "Raleway", sans-serif;
   background-color: var(--color-bg);
   color: var(--color-foreground);
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }

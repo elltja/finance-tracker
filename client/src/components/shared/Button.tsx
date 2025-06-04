@@ -17,7 +17,7 @@ export default function Button({
 }: ButtonProps) {
   const variantClass = {
     primary: "bg-primary text-white hover:bg-primary-hover",
-    outline: "bg-bg border border-gray-200 text-foreground hover:bg-bg-hover",
+    outline: "bg-bg border border-border text-foreground hover:bg-bg-hover",
   }[variant];
   return (
     <button

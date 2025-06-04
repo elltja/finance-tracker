@@ -34,7 +34,7 @@ const CustomOption = (props: OptionProps<OptionType, false>) => {
     <div
       ref={innerRef}
       {...innerProps}
-      className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 cursor-pointer"
+      className="flex items-center gap-2 px-3 py-2 hover:bg-bg-hover cursor-pointer"
     >
       {Icon && <Icon size={16} />}
       <span>{data.label}</span>
@@ -55,11 +55,20 @@ export default function Select(
       styles={{
         control: (base) => ({
           ...base,
-          borderColor: "var(--color-gray-300)",
+          borderColor: "var(--color-border)",
           boxShadow: "none",
+          backgroundColor: "var(--color-bg)",
           "&:hover": {
-            borderColor: "var(--color-gray-300)",
+            borderColor: "var(--color-border)",
           },
+        }),
+        menu: (base) => ({
+          ...base,
+          backgroundColor: "var(--color-bg)",
+        }),
+        singleValue: (base) => ({
+          ...base,
+          color: "var(--color-foreground)",
         }),
       }}
       {...props}
