@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RegisterRoutes() *gin.Engine {
+func RegisterRoutes(deps Dependencies) *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
@@ -32,13 +32,14 @@ func RegisterRoutes() *gin.Engine {
 	})
 
 	/* Auth */
+	authHandler := auth.NewHandler(deps.DB, deps.Store)
 	authRoutes := r.Group("/auth")
 	{
-		authRoutes.POST("/register", auth.RegisterHandler)
-		authRoutes.POST("/login", auth.LoginHandler)
-		authRoutes.GET("/:provider", auth.OAuthHandler)
-		authRoutes.GET("/:provider/callback", auth.OAuthCallbackHandler)
-		authRoutes.GET("/me", auth.MeHandler)
+		authRoutes.POST("/register", authHandler.RegisterHandler)
+		authRoutes.POST("/login", authHandler.LoginHandler)
+		authRoutes.GET("/:provider", authHandler.OAuthHandler)
+		authRoutes.GET("/:provider/callback", authHandler.OAuthCallbackHandler)
+		authRoutes.GET("/me", authHandler.MeHandler)
 	}
 
 	return r

@@ -16,24 +16,21 @@ const (
 	CookieSessionKey = "session-id"
 )
 
-var (
-	Store *sessions.CookieStore
-)
-
-func Init() {
+func Init() *sessions.CookieStore {
 	sessionSecret := os.Getenv("SESSION_SECRET")
 	if sessionSecret == "" {
 		log.Fatal("SESSION_SECRET environment variable is required")
 	}
-	Store = sessions.NewCookieStore([]byte(sessionSecret))
+	store := sessions.NewCookieStore([]byte(sessionSecret))
 
-	Store.Options.Path = "/"
-	Store.Options.HttpOnly = true
-	Store.Options.Secure = getIsProd()
-	Store.MaxAge(86400)
+	store.Options.Path = "/"
+	store.Options.HttpOnly = true
+	store.Options.Secure = getIsProd()
+	store.MaxAge(86400)
 
 	initOAuthProviders()
-	gothic.Store = Store
+	gothic.Store = store
+	return store
 }
 
 func getIsProd() bool {

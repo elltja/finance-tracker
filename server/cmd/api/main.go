@@ -15,17 +15,22 @@ func main() {
 		log.Println("No .env file found, continuing with system environment variables")
 	}
 
-	database.Init()
-	defer database.DB.Close()
+	db := database.Init()
+	defer db.Close()
 
-	auth.Init()
+	store := auth.Init()
 
-	s := server.NewServer()
+	deps := server.Dependencies{
+		DB:    db,
+		Store: store,
+	}
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8000"
 	}
+
+	s := server.NewServer(deps, port)
 
 	log.Printf("Starting server on port %s...", port)
 	if err := s.ListenAndServe(); err != nil {

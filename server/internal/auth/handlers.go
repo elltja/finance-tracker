@@ -1,12 +1,14 @@
 package auth
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 	"os"
 
 	"github.com/elltja/finance-tracker/internal/database"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/sessions"
 	"github.com/markbates/goth/gothic"
 )
 
@@ -28,7 +30,16 @@ type OAuthCredentials struct {
 	ProviderId string `json:"provider_id"`
 }
 
-func RegisterHandler(ctx *gin.Context) {
+type AuthHandler struct {
+	DB    *sql.DB
+	Store *sessions.CookieStore
+}
+
+func NewHandler(DB *sql.DB, Store *sessions.CookieStore) *AuthHandler {
+	return &AuthHandler{DB: DB, Store: Store}
+}
+
+func (h *AuthHandler) RegisterHandler(ctx *gin.Context) {
 	var credentials RegisterCredentials
 
 	if err := ctx.ShouldBindJSON(&credentials); err != nil {
@@ -38,7 +49,7 @@ func RegisterHandler(ctx *gin.Context) {
 		return
 	}
 
-	existingUser, err := database.FindUserForAuth(credentials.Email)
+	existingUser, err := database.FindUserForAuth(h.DB, credentials.Email)
 
 	if err != nil {
 		fmt.Println("Error getting user", err)
@@ -70,7 +81,7 @@ func RegisterHandler(ctx *gin.Context) {
 		Name:     credentials.Name,
 	}
 
-	user, err := database.CreateUser(newUser)
+	user, err := database.CreateUser(h.DB, newUser)
 
 	if err != nil {
 		fmt.Println("Error creating user")
@@ -80,7 +91,7 @@ func RegisterHandler(ctx *gin.Context) {
 		return
 	}
 
-	session, err := Store.Get(ctx.Request, CookieSessionKey)
+	session, err := h.Store.Get(ctx.Request, CookieSessionKey)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Failed to get session",
@@ -102,7 +113,7 @@ func RegisterHandler(ctx *gin.Context) {
 	})
 }
 
-func LoginHandler(ctx *gin.Context) {
+func (h *AuthHandler) LoginHandler(ctx *gin.Context) {
 	var credentials LoginCredentials
 	if err := ctx.ShouldBindJSON(&credentials); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{
@@ -111,7 +122,7 @@ func LoginHandler(ctx *gin.Context) {
 		return
 	}
 
-	existingUser, err := database.FindUserForAuth(credentials.Email)
+	existingUser, err := database.FindUserForAuth(h.DB, credentials.Email)
 
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{
@@ -141,7 +152,7 @@ func LoginHandler(ctx *gin.Context) {
 		return
 	}
 
-	session, _ := Store.Get(ctx.Request, CookieSessionKey)
+	session, _ := h.Store.Get(ctx.Request, CookieSessionKey)
 
 	session.Values["user_id"] = existingUser.Id
 
@@ -157,7 +168,7 @@ func LoginHandler(ctx *gin.Context) {
 	})
 }
 
-func OAuthHandler(ctx *gin.Context) {
+func (h *AuthHandler) OAuthHandler(ctx *gin.Context) {
 	provider := ctx.Param("provider")
 
 	q := ctx.Request.URL.Query()
@@ -167,7 +178,7 @@ func OAuthHandler(ctx *gin.Context) {
 	gothic.BeginAuthHandler(ctx.Writer, ctx.Request)
 }
 
-func OAuthCallbackHandler(ctx *gin.Context) {
+func (h *AuthHandler) OAuthCallbackHandler(ctx *gin.Context) {
 	gothUser, err := gothic.CompleteUserAuth(ctx.Writer, ctx.Request)
 	if err != nil {
 		fmt.Println("Error: ", err)
@@ -179,7 +190,7 @@ func OAuthCallbackHandler(ctx *gin.Context) {
 
 	frontEndUrl := os.Getenv("FRONTEND_URL")
 
-	existingUser, err := database.FindUserForAuth(gothUser.Email)
+	existingUser, err := database.FindUserForAuth(h.DB, gothUser.Email)
 
 	if err != nil {
 		fmt.Println("Error getting user", err)
@@ -194,7 +205,7 @@ func OAuthCallbackHandler(ctx *gin.Context) {
 		if name == "" {
 			name = gothUser.NickName
 		}
-		user, err := database.CreateOAuthUser(OAuthCredentials{
+		user, err := database.CreateOAuthUser(h.DB, OAuthCredentials{
 			Name:       name,
 			Email:      gothUser.Email,
 			Provider:   gothUser.Provider,
@@ -207,7 +218,7 @@ func OAuthCallbackHandler(ctx *gin.Context) {
 			})
 			return
 		}
-		session, err := Store.Get(ctx.Request, CookieSessionKey)
+		session, err := h.Store.Get(ctx.Request, CookieSessionKey)
 		if err != nil {
 			ctx.JSON(http.StatusInternalServerError, gin.H{
 				"message": "Failed to get session",
@@ -221,7 +232,7 @@ func OAuthCallbackHandler(ctx *gin.Context) {
 		return
 	}
 
-	session, _ := Store.Get(ctx.Request, CookieSessionKey)
+	session, _ := h.Store.Get(ctx.Request, CookieSessionKey)
 
 	session.Values["user_id"] = existingUser.Id
 
@@ -231,8 +242,8 @@ func OAuthCallbackHandler(ctx *gin.Context) {
 	ctx.Redirect(http.StatusFound, frontEndUrl)
 }
 
-func MeHandler(ctx *gin.Context) {
-	session, _ := Store.Get(ctx.Request, CookieSessionKey)
+func (h *AuthHandler) MeHandler(ctx *gin.Context) {
+	session, _ := h.Store.Get(ctx.Request, CookieSessionKey)
 
 	userId, ok := session.Values["user_id"].(string)
 	if !ok {
@@ -242,7 +253,7 @@ func MeHandler(ctx *gin.Context) {
 		return
 	}
 
-	user, err := database.GetUser(userId)
+	user, err := database.GetUser(h.DB, userId)
 
 	if err != nil {
 		fmt.Println("Error getting user: ", err)
