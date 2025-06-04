@@ -1,7 +1,7 @@
 import { useEffect, useState, Dispatch, SetStateAction } from "react";
 
 export default function usePersistentState<T>(
-  initialState: T,
+  initialState: T | (() => T),
   storageKey: string
 ): [T, Dispatch<SetStateAction<T>>] {
   const [state, setState] = useState<T>(() => {
@@ -10,7 +10,9 @@ export default function usePersistentState<T>(
       return JSON.parse(stored) as T;
     }
 
-    return initialState;
+    return typeof initialState === "function"
+      ? (initialState as () => T)()
+      : initialState;
   });
 
   useEffect(() => {

@@ -7,6 +7,7 @@ const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
 
 export default function App() {
   const user = useAuth();
+
   return (
     <>
       <Suspense fallback={<Loading />}>

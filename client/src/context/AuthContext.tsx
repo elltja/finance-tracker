@@ -30,6 +30,7 @@ export default function AuthProvider({
   const { data } = useQuery<User | null>({
     queryKey: ["user"],
     queryFn: fetchUser,
+    staleTime: 1000 * 60 * 5,
     retry: false,
   });
   console.log({ data });
