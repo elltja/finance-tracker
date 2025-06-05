@@ -1,10 +1,19 @@
+import { getLocale } from "@/utils/locale";
+
 type Provider = "github" | "google";
 
 export default function OAuth() {
-  function handleOAuthLogin(provider: Provider) {
+  async function handleOAuthLogin(provider: Provider) {
+    const { currency, language } = await getLocale();
+    const state = encodeURIComponent(
+      JSON.stringify({
+        preferred_currency: currency,
+        preferred_language: language,
+      })
+    );
     window.location.href = `${
       import.meta.env.VITE_BACKEND_URL
-    }/auth/${provider}`;
+    }/auth/${provider}?state=${state}`;
   }
   return (
     <div className="h-fit flex flex-col gap-3">

@@ -2,6 +2,7 @@ package auth
 
 import (
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
@@ -13,9 +14,11 @@ import (
 )
 
 type RegisterCredentials struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Name              string `json:"name"`
+	Email             string `json:"email"`
+	Password          string `json:"password"`
+	PreferredCurrency string `json:"preferred_currency"`
+	PreferredLanguage string `json:"preferred_language"`
 }
 
 type LoginCredentials struct {
@@ -24,10 +27,12 @@ type LoginCredentials struct {
 }
 
 type OAuthCredentials struct {
-	Name       string `json:"name"`
-	Email      string `json:"email"`
-	Provider   string `json:"provider"`
-	ProviderId string `json:"provider_id"`
+	Name              string `json:"name"`
+	Email             string `json:"email"`
+	Provider          string `json:"provider"`
+	ProviderId        string `json:"provider_id"`
+	PreferredCurrency string `json:"preferred_currency"`
+	PreferredLanguage string `json:"preferred_language"`
 }
 
 type AuthHandler struct {
@@ -75,10 +80,14 @@ func (h *AuthHandler) RegisterHandler(ctx *gin.Context) {
 		return
 	}
 
-	newUser := RegisterCredentials{
-		Email:    credentials.Email,
-		Password: passwordHash,
-		Name:     credentials.Name,
+	fmt.Println(credentials.PreferredCurrency, credentials.PreferredLanguage)
+
+	newUser := database.CreateUserCredentials{
+		Email:             credentials.Email,
+		Password:          passwordHash,
+		Name:              credentials.Name,
+		PreferredCurrency: credentials.PreferredCurrency,
+		PreferredLanguage: credentials.PreferredLanguage,
 	}
 
 	user, err := database.CreateUser(h.DB, newUser)
@@ -171,14 +180,29 @@ func (h *AuthHandler) LoginHandler(ctx *gin.Context) {
 func (h *AuthHandler) OAuthHandler(ctx *gin.Context) {
 	provider := ctx.Param("provider")
 
+	state := ctx.Query("state")
+
 	q := ctx.Request.URL.Query()
 	q.Set("provider", provider)
+	if state != "" {
+		q.Set("state", state)
+	}
 	ctx.Request.URL.RawQuery = q.Encode()
 
 	gothic.BeginAuthHandler(ctx.Writer, ctx.Request)
 }
 
 func (h *AuthHandler) OAuthCallbackHandler(ctx *gin.Context) {
+	stateParam := ctx.Query("state")
+	var extraData struct {
+		PreferredCurrency string `json:"preferred_currency"`
+		PreferredLanguage string `json:"preferred_language"`
+	}
+	if stateParam != "" {
+		if err := json.Unmarshal([]byte(stateParam), &extraData); err != nil {
+			fmt.Println("Failed to decode state:", err)
+		}
+	}
 	gothUser, err := gothic.CompleteUserAuth(ctx.Writer, ctx.Request)
 	if err != nil {
 		fmt.Println("Error: ", err)
@@ -205,11 +229,13 @@ func (h *AuthHandler) OAuthCallbackHandler(ctx *gin.Context) {
 		if name == "" {
 			name = gothUser.NickName
 		}
-		user, err := database.CreateOAuthUser(h.DB, OAuthCredentials{
-			Name:       name,
-			Email:      gothUser.Email,
-			Provider:   gothUser.Provider,
-			ProviderId: gothUser.UserID,
+		user, err := database.CreateOAuthUser(h.DB, database.CreateOAuthCredentials{
+			Name:              name,
+			Email:             gothUser.Email,
+			Provider:          gothUser.Provider,
+			ProviderId:        gothUser.UserID,
+			PreferredCurrency: extraData.PreferredCurrency,
+			PreferredLanguage: extraData.PreferredLanguage,
 		})
 		if err != nil {
 			fmt.Println("Error creating user", err)

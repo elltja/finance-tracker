@@ -6,6 +6,23 @@ import (
 	"github.com/elltja/finance-tracker/internal/models"
 )
 
+type CreateUserCredentials struct {
+	Name              string `json:"name"`
+	Email             string `json:"email"`
+	Password          string `json:"password"`
+	PreferredCurrency string `json:"preferred_currency"`
+	PreferredLanguage string `json:"preferred_language"`
+}
+
+type CreateOAuthCredentials struct {
+	Name              string `json:"name"`
+	Email             string `json:"email"`
+	Provider          string `json:"provider"`
+	ProviderId        string `json:"provider_id"`
+	PreferredCurrency string `json:"preferred_currency"`
+	PreferredLanguage string `json:"preferred_language"`
+}
+
 func FindUserForAuth(db *sql.DB, email string) (*models.User, error) {
 	row := db.QueryRow(`SELECT id, name, email, password_hash, provider, provider_id, created_at FROM users WHERE email = $1`, email)
 	var user models.User
@@ -28,40 +45,37 @@ func GetUser(db *sql.DB, id string) (*models.PublicUser, error) {
 	return &user, nil
 }
 
-func CreateUser(db *sql.DB, credentials struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}) (*models.User, error) {
+func CreateUser(db *sql.DB, credentials CreateUserCredentials) (*models.User, error) {
 	row := db.QueryRow(
-		`INSERT INTO users (name, email, password_hash) 
-		 VALUES ($1, $2, $3) 
-		 RETURNING id, name, email, password_hash, provider, provider_id, created_at`,
-		credentials.Name, credentials.Email, credentials.Password,
+		`INSERT INTO users (name, email, password_hash, preferred_currency, preferred_language) 
+		 VALUES ($1, $2, $3, $4, $5) 
+		 RETURNING id, name, email, password_hash, provider, provider_id, created_at, preferred_currency, preferred_language`,
+		credentials.Name, credentials.Email, credentials.Password, credentials.PreferredCurrency, credentials.PreferredLanguage,
 	)
 
 	var user models.User
-	if err := row.Scan(&user.Id, &user.Name, &user.Email, &user.HashedPassword, &user.Provider, &user.ProviderId, &user.CreatedAt); err != nil {
+	if err := row.Scan(&user.Id, &user.Name, &user.Email, &user.HashedPassword, &user.Provider, &user.ProviderId, &user.CreatedAt, &user.PreferredCurrency, &user.PreferredLanguage); err != nil {
 		return nil, err
 	}
 	return &user, nil
 }
 
-func CreateOAuthUser(db *sql.DB, credentials struct {
-	Name       string `json:"name"`
-	Email      string `json:"email"`
-	Provider   string `json:"provider"`
-	ProviderId string `json:"provider_id"`
-}) (*models.User, error) {
+func CreateOAuthUser(db *sql.DB, credentials CreateOAuthCredentials) (*models.User, error) {
+	if credentials.PreferredCurrency == "" {
+		credentials.PreferredCurrency = "usd"
+	}
+	if credentials.PreferredLanguage == "" {
+		credentials.PreferredLanguage = "en"
+	}
 	row := db.QueryRow(
-		`INSERT INTO users (name, email, provider, provider_id) 
-		 VALUES ($1, $2, $3, $4) 
-		 RETURNING id, name, email, password_hash, provider, provider_id, created_at`,
-		credentials.Name, credentials.Email, credentials.Provider, credentials.ProviderId,
+		`INSERT INTO users (name, email, provider, provider_id, preferred_currency, preferred_language) 
+		 VALUES ($1, $2, $3, $4, $5, $6) 
+		 RETURNING id, name, email, password_hash, provider, provider_id, created_at, preferred_currency, preferred_language`,
+		credentials.Name, credentials.Email, credentials.Provider, credentials.ProviderId, credentials.PreferredCurrency, credentials.PreferredLanguage,
 	)
 
 	var user models.User
-	if err := row.Scan(&user.Id, &user.Name, &user.Email, &user.HashedPassword, &user.Provider, &user.ProviderId, &user.CreatedAt); err != nil {
+	if err := row.Scan(&user.Id, &user.Name, &user.Email, &user.HashedPassword, &user.Provider, &user.ProviderId, &user.CreatedAt, &user.PreferredCurrency, &user.PreferredLanguage); err != nil {
 		return nil, err
 	}
 	return &user, nil

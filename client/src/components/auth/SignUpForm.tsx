@@ -20,12 +20,20 @@ export default function SignUpForm() {
   const id = useId();
   const { register, handleSubmit } = useForm<FormFields>();
   const queryClient = useQueryClient();
+
   const { mutate, data } = useMutation<FormResult, unknown, FormFields>({
     mutationFn: async (data: FormFields): Promise<FormResult> => {
       const { currency, language } = await getLocale();
+      alert(currency + " " + language);
+      console.log({ currency, language });
+
       const res = await fetch(API_URL, {
         method: "POST",
-        body: JSON.stringify({ ...data, language, currency }),
+        body: JSON.stringify({
+          ...data,
+          preferred_currency: currency,
+          preferred_language: language,
+        }),
         headers: {
           "Content-Type": "application/json",
         },
