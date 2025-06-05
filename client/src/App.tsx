@@ -8,19 +8,23 @@ const Auth = React.lazy(() => import("@/pages/Auth"));
 const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
 
 export default function App() {
-  const user = useAuth();
+  const { user, isLoading } = useAuth();
 
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    (async () => {
-      console.log("lang", user?.preferred_language);
+    if (isLoading) return;
 
-      i18n.changeLanguage(
-        user?.preferred_language || (await getLocale()).language || "en"
-      );
-    })();
-  }, [user, i18n]);
+    const setLanguage = async () => {
+      const lang =
+        user?.preferred_language ?? (await getLocale())?.language ?? "en";
+      if (i18n.language !== lang) {
+        await i18n.changeLanguage(lang);
+      }
+    };
+
+    setLanguage();
+  }, [user, isLoading, i18n]);
 
   return (
     <>

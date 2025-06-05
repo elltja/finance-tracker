@@ -18,8 +18,8 @@ interface TransactionFormProps {
 export default function TransactionForm({ onClose }: TransactionFormProps) {
   const id = useId();
   const { t } = useTranslation();
-  const user = useAuth()!;
-  const currency = user.preferred_currency || "USD";
+  const { user } = useAuth();
+  const currency = user?.preferred_currency || "USD";
   const { register, handleSubmit, control } = useForm<FormFields>();
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {

@@ -5,9 +5,6 @@ import sv from "./locales/sv.json";
 
 const DEFAULT_LANGUAGE = "en";
 
-// the translations
-// (tip move them in a JSON file and import them,
-// or even better, manage them separated from your code: https://react.i18next.com/guides/multiple-translation-files)
 const resources = {
   en: {
     translation: en,
@@ -20,6 +17,7 @@ const resources = {
 i18n.use(initReactI18next).init({
   resources,
   lng: DEFAULT_LANGUAGE,
+  fallbackLng: DEFAULT_LANGUAGE,
   interpolation: {
     escapeValue: false,
   },

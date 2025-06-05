@@ -18,7 +18,7 @@ const initialTheme: ThemeType =
     ? "dark"
     : "light";
 
-export default function ThemeProvider({
+export function ThemeProvider({
   children,
 }: {
   children: Readonly<React.ReactNode>;
