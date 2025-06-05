@@ -5,6 +5,7 @@ import App from "./App.tsx";
 import ThemeProvider from "./context/ThemeContext";
 import AuthProvider from "./context/AuthContext.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import "@/utils/i18n/i18n.ts";
 
 const client = new QueryClient();
 

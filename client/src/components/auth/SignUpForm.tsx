@@ -4,6 +4,7 @@ import FormInput from "../shared/FormInput";
 import SubmitButton from "../shared/Button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { getLocale } from "@/utils/locale";
 
 const API_URL = `${import.meta.env.VITE_BACKEND_URL}/auth/register`;
 
@@ -21,9 +22,10 @@ export default function SignUpForm() {
   const queryClient = useQueryClient();
   const { mutate, data } = useMutation<FormResult, unknown, FormFields>({
     mutationFn: async (data: FormFields): Promise<FormResult> => {
+      const { currency, language } = await getLocale();
       const res = await fetch(API_URL, {
         method: "POST",
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, language, currency }),
         headers: {
           "Content-Type": "application/json",
         },

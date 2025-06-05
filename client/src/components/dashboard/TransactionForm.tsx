@@ -6,7 +6,7 @@ import { useId } from "react";
 import Button from "../shared/Button";
 import CategorySelect from "./CategorySelect";
 import TypeSelect from "./TypeSelect";
-import useCurrency from "@/hooks/useCurrency";
+import { useAuth } from "@/context/AuthContext";
 
 type FormFields = Omit<Transaction, "date">;
 
@@ -16,7 +16,8 @@ interface TransactionFormProps {
 
 export default function TransactionForm({ onClose }: TransactionFormProps) {
   const id = useId();
-  const currency = useCurrency();
+  const user = useAuth()!;
+  const currency = user.preferredCurrency || "USD";
   const { register, handleSubmit, control } = useForm<FormFields>();
 
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
@@ -49,16 +50,25 @@ export default function TransactionForm({ onClose }: TransactionFormProps) {
         <label htmlFor={`category-select-${id}`}>Category</label>
         <CategorySelect id={`category-select-${id}`} control={control} />
       </div>
-      <FormInput
-        id={`amount-${id}`}
-        Icon={currency === "USD" ? DollarSign : Coins}
-        label={`Amount in ${currency}`}
-        type="number"
-        inputMode="decimal"
-        autoComplete="off"
-        placeholder="$0.00"
-        {...register("amount", { valueAsNumber: true })}
-      />
+      <div>
+        <FormInput
+          id={`amount-${id}`}
+          Icon={currency === "USD" ? DollarSign : Coins}
+          label={
+            <p className="w-full flex justify-between">
+              Amount in {currency}{" "}
+              <span className="cursor-pointer text-sm my-1 hover:underline">
+                change currency
+              </span>
+            </p>
+          }
+          type="number"
+          inputMode="decimal"
+          autoComplete="off"
+          placeholder="$0.00"
+          {...register("amount", { valueAsNumber: true })}
+        />
+      </div>
       <div className="flex gap-2 w-full justify-end">
         <Button type="button" variant="outline" onClick={onClose}>
           Cancel

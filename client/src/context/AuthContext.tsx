@@ -33,7 +33,6 @@ export default function AuthProvider({
     staleTime: 1000 * 60 * 5,
     retry: false,
   });
-  console.log({ data });
 
   return (
     <AuthContext.Provider value={data ?? null}>{children}</AuthContext.Provider>

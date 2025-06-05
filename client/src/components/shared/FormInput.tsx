@@ -2,7 +2,7 @@ import { LucideProps } from "lucide-react";
 import React, { InputHTMLAttributes } from "react";
 
 interface FormInputProps extends InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
+  label?: React.ReactNode;
   Icon: React.ComponentType<LucideProps>;
 }
 

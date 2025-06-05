@@ -1,0 +1,4 @@
+{
+  "welcomeMessage": "Välkommen, {{name}}",
+  "addTransaction": "Lägg till en transaktion"
+}
