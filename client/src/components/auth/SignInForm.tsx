@@ -4,6 +4,7 @@ import FormInput from "../shared/FormInput";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Button from "../shared/Button";
+import { useTranslation } from "react-i18next";
 
 const API_URL = `${import.meta.env.VITE_BACKEND_URL}/auth/login`;
 
@@ -16,6 +17,7 @@ type FormResult = { message: string; isError: boolean };
 
 export default function SignInForm() {
   const id = useId();
+  const { t } = useTranslation();
   const { register, handleSubmit } = useForm<FormFields>();
   const queryClient = useQueryClient();
   const { mutate, data } = useMutation<FormResult, unknown, FormFields>({
@@ -44,18 +46,20 @@ export default function SignInForm() {
     <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col">
         <label htmlFor={`email-${id}`} className="">
-          Email
+          {t("auth.inputs.email.label")}
         </label>
         <FormInput
           Icon={Mail}
           type="email"
           id={`email-${id}`}
-          placeholder="you@example.com"
+          placeholder={t("auth.inputs.email.placeholder")}
           {...register("email")}
         />
       </div>
       <div className="flex flex-col">
-        <label htmlFor={`password-${id}`}>Password</label>
+        <label htmlFor={`password-${id}`}>
+          {t("auth.inputs.password.label")}
+        </label>
         <FormInput
           Icon={Lock}
           type="password"
@@ -69,7 +73,7 @@ export default function SignInForm() {
           {data.message}
         </p>
       )}
-      <Button>Sign In</Button>
+      <Button>{t("auth.signIn")}</Button>
     </form>
   );
 }

@@ -37,9 +37,9 @@ func FindUserForAuth(db *sql.DB, email string) (*models.User, error) {
 }
 
 func GetUser(db *sql.DB, id string) (*models.PublicUser, error) {
-	row := db.QueryRow(`SELECT id, name, email, created_at FROM users WHERE id = $1`, id)
+	row := db.QueryRow(`SELECT id, name, email, created_at, preferred_currency, preferred_language FROM users WHERE id = $1`, id)
 	var user models.PublicUser
-	if err := row.Scan(&user.Id, &user.Name, &user.Email, &user.CreatedAt); err != nil {
+	if err := row.Scan(&user.Id, &user.Name, &user.Email, &user.CreatedAt, &user.PreferredCurrency, &user.PreferredLanguage); err != nil {
 		return nil, err
 	}
 	return &user, nil

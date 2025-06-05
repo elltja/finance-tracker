@@ -1,5 +1,6 @@
 import { Transaction } from "@/types/transaction";
 import { TableHead, TableRow } from "../shared/Table";
+import { useTranslation } from "react-i18next";
 
 const data = [
   {
@@ -38,10 +39,14 @@ const COLUMNS: (keyof Transaction)[] = [
 ];
 
 export default function TransactionsTable() {
+  const { t } = useTranslation();
+
   return (
     <div className="overflow-x-auto">
       <table className="table-fixed w-full max-w-screen min-w-[600px]">
-        <TableHead keys={COLUMNS} />
+        <TableHead
+          keys={COLUMNS.map((c) => t(`dashboard.table.columns.${c}`))}
+        />
         <tbody>
           {data.map((item, index) => (
             <TableRow

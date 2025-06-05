@@ -1,4 +1,38 @@
 {
-  "welcomeMessage": "Welcome, {{name}}",
-  "addTransaction": "Add a transaction"
+  "dashboard": {
+    "welcomeMessage": "Welcome, {{name}}!",
+    "addTransaction": "Add a transaction",
+    "addTransactionDialog": {
+      "description": "Add an expense or income",
+      "amountInCurrency": "Amount in {{currency}}",
+      "changeCurrency": "change currency"
+    },
+    "table": {
+      "columns": {
+        "name": "Name",
+        "description": "Description",
+        "type": "Type",
+        "date": "Date",
+        "category": "Category",
+        "amount": "Amount"
+      }
+    }
+  },
+  "auth": {
+    "signUp": "Sign up",
+    "signIn": "Sign in",
+    "continueWithOAuth": "Continue with {{provider}}",
+    "inputs": {
+      "email": {
+        "label": "Email",
+        "placeholder": "you@example.com"
+      },
+      "password": {
+        "label": "Password"
+      }
+    }
+  },
+  "or": "or",
+  "submit": "Sumit",
+  "cancel": "Cancel"
 }

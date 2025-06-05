@@ -12,8 +12,10 @@ export default function Dashboard() {
   return (
     <DashboardLayout>
       <div className="p-10 flex flex-col gap-10">
-        <h1 className="text-xl font-bold"></h1>
-        {t("welcomeMessage", { name: capitalize(user?.name) })}
+        <h1 className="text-xl font-bold">
+          {t("dashboard.welcomeMessage", { name: capitalize(user?.name) })}
+        </h1>
+
         <TransactionDialogTrigger />
         <TransactionsTable />
       </div>

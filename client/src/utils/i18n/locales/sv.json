@@ -1,4 +1,38 @@
 {
-  "welcomeMessage": "Välkommen, {{name}}",
-  "addTransaction": "Lägg till en transaktion"
+  "dashboard": {
+    "welcomeMessage": "Välkommen, {{name}}!",
+    "addTransaction": "Lägg till en transaktion",
+    "addTransactionDialog": {
+      "description": "Lägg till en kostnad eller inkomst",
+      "amountInCurrency": "Summa i {{currency}}",
+      "changeCurrency": "välj en annan valuta"
+    },
+    "table": {
+      "columns": {
+        "name": "Namn",
+        "description": "Beskrivning",
+        "type": "Typ",
+        "date": "Datum",
+        "category": "Kategori",
+        "amount": "Summa"
+      }
+    }
+  },
+  "auth": {
+    "signUp": "Registrera dig",
+    "signIn": "Logga in",
+    "continueWithOAuth": "Fortsätt med {{provider}}",
+    "inputs": {
+      "email": {
+        "label": "Email",
+        "placeholder": "dittnamn@exempel.se"
+      },
+      "password": {
+        "label": "Lösenord"
+      }
+    }
+  },
+  "or": "eller",
+  "submit": "Bekräfta",
+  "cancel": "Avbryt"
 }

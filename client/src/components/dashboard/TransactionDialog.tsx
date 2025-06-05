@@ -2,11 +2,13 @@ import Button from "../shared/Button";
 import { Plus } from "lucide-react";
 import usePersistentState from "@/hooks/usePersistentState";
 import TransactionForm from "./TransactionForm";
+import { useTranslation } from "react-i18next";
 export function TransactionDialogTrigger() {
   const [isOpen, setIsOpen] = usePersistentState(
     false,
     "transaction-dialog-state"
   );
+  const { t } = useTranslation();
   return (
     <>
       <Button
@@ -15,7 +17,7 @@ export function TransactionDialogTrigger() {
         aria-label="Open transaction dialog"
         onClick={() => setIsOpen(true)}
       >
-        Add Transaction <Plus className="size-5" />
+        {t("dashboard.addTransaction")} <Plus className="size-5" />
       </Button>
       <TransactionDialog isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </>
@@ -28,6 +30,8 @@ interface TransactionDialogProps {
 }
 
 export function TransactionDialog({ isOpen, onClose }: TransactionDialogProps) {
+  const { t } = useTranslation();
+
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-40">
@@ -42,8 +46,10 @@ export function TransactionDialog({ isOpen, onClose }: TransactionDialogProps) {
         className="relative z-50 mx-auto mt-40 w-full sm:w-2/3 lg:w-1/2 m-2 bg-bg p-6 rounded shadow"
       >
         <header className="mb-2">
-          <h2 className="font-semibold text-lg">Add transsaction</h2>
-          <p>Add an expense or income</p>
+          <h2 className="font-semibold text-lg">
+            {t("dashboard.addTransaction")}
+          </h2>
+          <p>{t("dashboard.addTransactionDialog.description")}</p>
         </header>
         <TransactionForm onClose={onClose} />
       </div>

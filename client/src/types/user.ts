@@ -3,4 +3,6 @@ export type User = {
   name: string;
   email: string;
   created_at: Date;
+  preferred_currency: string;
+  preferred_language: string;
 };

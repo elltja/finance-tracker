@@ -3,6 +3,7 @@ import OAuth from "./OAuth";
 import Separator from "./Separator";
 import TabButton from "./TabButton";
 import React, { startTransition, Suspense } from "react";
+import { useTranslation } from "react-i18next";
 
 const SignInForm = React.lazy(() => import("./SignInForm"));
 const SignUpForm = React.lazy(() => import("./SignUpForm"));
@@ -14,6 +15,7 @@ export default function AuthTabs() {
     "signin",
     TAB_STORAGE_KEY
   );
+  const { t } = useTranslation();
   return (
     <main className="w-full max-w-[500px] h-fit flex flex-col gap-3">
       <header className="w-full flex text-lg">
@@ -21,13 +23,13 @@ export default function AuthTabs() {
           isActive={tab === "signin"}
           onClick={() => startTransition(() => setTab("signin"))}
         >
-          Sign In
+          {t("auth.signIn")}
         </TabButton>
         <TabButton
           isActive={tab === "signup"}
           onClick={() => startTransition(() => setTab("signup"))}
         >
-          Sign Up
+          {t("auth.signUp")}
         </TabButton>
       </header>
       <section className="h-fit">

@@ -5,6 +5,7 @@ import SubmitButton from "../shared/Button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { getLocale } from "@/utils/locale";
+import { useTranslation } from "react-i18next";
 
 const API_URL = `${import.meta.env.VITE_BACKEND_URL}/auth/register`;
 
@@ -18,6 +19,7 @@ type FormResult = { message: string; isError: boolean };
 
 export default function SignUpForm() {
   const id = useId();
+  const { t } = useTranslation();
   const { register, handleSubmit } = useForm<FormFields>();
   const queryClient = useQueryClient();
 
@@ -67,18 +69,20 @@ export default function SignUpForm() {
       </div>
       <div className="flex flex-col">
         <label htmlFor={`email-${id}`} className="">
-          Email
+          {t("auth.inputs.email.label")}
         </label>
         <FormInput
           Icon={Mail}
           type="email"
           id={`email-${id}`}
-          placeholder="you@example.com"
+          placeholder={t("auth.inputs.email.placeholder")}
           {...register("email")}
         />
       </div>
       <div className="flex flex-col">
-        <label htmlFor={`password-${id}`}>Password</label>
+        <label htmlFor={`password-${id}`}>
+          {t("auth.inputs.password.label")}
+        </label>
         <FormInput
           Icon={Lock}
           type="password"
@@ -92,7 +96,7 @@ export default function SignUpForm() {
           {data?.message}
         </p>
       )}
-      <SubmitButton>Sign Up</SubmitButton>
+      <SubmitButton>{t("auth.signUp")}</SubmitButton>
     </form>
   );
 }
