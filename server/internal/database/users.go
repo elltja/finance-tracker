@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"strings"
 
 	"github.com/elltja/finance-tracker/internal/models"
 )
@@ -67,11 +68,12 @@ func CreateOAuthUser(db *sql.DB, credentials CreateOAuthCredentials) (*models.Us
 	if credentials.PreferredLanguage == "" {
 		credentials.PreferredLanguage = "en"
 	}
+
 	row := db.QueryRow(
 		`INSERT INTO users (name, email, provider, provider_id, preferred_currency, preferred_language) 
 		 VALUES ($1, $2, $3, $4, $5, $6) 
 		 RETURNING id, name, email, password_hash, provider, provider_id, created_at, preferred_currency, preferred_language`,
-		credentials.Name, credentials.Email, credentials.Provider, credentials.ProviderId, credentials.PreferredCurrency, credentials.PreferredLanguage,
+		credentials.Name, credentials.Email, credentials.Provider, credentials.ProviderId, credentials.PreferredCurrency, parseLocaleCode(credentials.PreferredLanguage),
 	)
 
 	var user models.User
@@ -79,4 +81,11 @@ func CreateOAuthUser(db *sql.DB, credentials CreateOAuthCredentials) (*models.Us
 		return nil, err
 	}
 	return &user, nil
+}
+
+func parseLocaleCode(code string) string {
+	if parts := strings.Split(code, "-"); len(parts) > 1 {
+		return parts[0]
+	}
+	return code
 }

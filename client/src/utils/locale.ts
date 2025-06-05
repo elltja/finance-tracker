@@ -10,3 +10,10 @@ export async function getLocale() {
       | undefined,
   };
 }
+
+export function parseLocaleCode(code: string) {
+  if (code.includes("-")) {
+    return code.split("-")[0];
+  }
+  return code;
+}
