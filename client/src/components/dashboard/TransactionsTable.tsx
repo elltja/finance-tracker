@@ -1,33 +1,7 @@
 import { Transaction } from "@/types/transaction";
 import { TableHead, TableRow } from "../shared/Table";
 import { useTranslation } from "react-i18next";
-
-const data = [
-  {
-    name: "Hello 1",
-    description: "Lorem ipsum",
-    type: "Abc",
-    date: "123",
-    category: "idk",
-    amount: "123.123",
-  },
-  {
-    name: "Hello 1",
-    description: "Lorem ipsum",
-    type: "Abc",
-    date: "123",
-    category: "idk",
-    amount: "123.123",
-  },
-  {
-    name: "Hello 1",
-    description: "Lorem ipsum",
-    type: "Abc",
-    date: "123",
-    category: "idk",
-    amount: "123.123",
-  },
-];
+import useTransactions from "@/hooks/useTransactions";
 
 const COLUMNS: (keyof Transaction)[] = [
   "name",
@@ -40,6 +14,7 @@ const COLUMNS: (keyof Transaction)[] = [
 
 export default function TransactionsTable() {
   const { t } = useTranslation();
+  const data = useTransactions();
 
   return (
     <div className="overflow-x-auto">

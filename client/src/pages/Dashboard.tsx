@@ -6,6 +6,7 @@ import { capitalize } from "@/utils/capitalize";
 import { useTranslation } from "react-i18next";
 import "@/utils/i18n/i18n";
 import Loading from "@/components/Loading";
+import { Suspense } from "react";
 
 export default function Dashboard() {
   const { user, isLoading } = useAuth();
@@ -21,7 +22,9 @@ export default function Dashboard() {
         </h1>
 
         <TransactionDialogTrigger />
-        <TransactionsTable />
+        <Suspense>
+          <TransactionsTable />
+        </Suspense>
       </div>
     </DashboardLayout>
   );

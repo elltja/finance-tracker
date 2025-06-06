@@ -14,5 +14,6 @@ type Config struct {
 
 func RegisterRoutes(r *gin.RouterGroup, c Config) {
 	h := NewHandler(c.DB, c.Store)
-	r.GET("/", h.GetAll)
+
+	r.GET("/all", h.GetAll)
 }

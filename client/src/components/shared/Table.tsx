@@ -2,7 +2,7 @@ import { capitalize } from "@/utils/capitalize";
 import clsx from "clsx";
 
 interface TableRowProps {
-  items: string[];
+  items: (string | number)[];
   className?: string;
 }
 

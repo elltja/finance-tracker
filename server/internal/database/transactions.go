@@ -7,7 +7,7 @@ import (
 )
 
 func GetTransactionsByUserId(db *sql.DB, userId string) ([]*models.Transaction, error) {
-	query := `SELECT id, name, description, created_at, amount, type FROM transactions WHERE user_id = $1`
+	query := `SELECT id, name, description, created_at, amount, type, category FROM transactions WHERE user_id = $1`
 
 	rows, err := db.Query(query, userId)
 	if err != nil {
@@ -20,7 +20,7 @@ func GetTransactionsByUserId(db *sql.DB, userId string) ([]*models.Transaction, 
 		var t models.Transaction
 		var description sql.NullString
 
-		if err := rows.Scan(&t.Id, &t.Name, &description, &t.CreatedAt, &t.Amount, &t.Type); err != nil {
+		if err := rows.Scan(&t.Id, &t.Name, &description, &t.CreatedAt, &t.Amount, &t.Type, &t.Category); err != nil {
 			return nil, err
 		}
 		if description.Valid {
