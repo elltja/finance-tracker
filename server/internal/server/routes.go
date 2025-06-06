@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/elltja/finance-tracker/internal/auth"
+	"github.com/elltja/finance-tracker/internal/transactions"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -32,15 +33,18 @@ func RegisterRoutes(deps Dependencies) *gin.Engine {
 	})
 
 	/* Auth */
-	authHandler := auth.NewHandler(deps.DB, deps.Store)
 	authRoutes := r.Group("/auth")
-	{
-		authRoutes.POST("/register", authHandler.RegisterHandler)
-		authRoutes.POST("/login", authHandler.LoginHandler)
-		authRoutes.GET("/:provider", authHandler.OAuthHandler)
-		authRoutes.GET("/:provider/callback", authHandler.OAuthCallbackHandler)
-		authRoutes.GET("/me", authHandler.MeHandler)
-	}
+	auth.RegisterRoutes(authRoutes, auth.Config{
+		DB:    deps.DB,
+		Store: deps.Store,
+	})
+
+	transactionRoutes := r.Group("/transactions")
+
+	transactions.RegisterRoutes(transactionRoutes, transactions.Config{
+		DB:    deps.DB,
+		Store: deps.Store,
+	})
 
 	return r
 }

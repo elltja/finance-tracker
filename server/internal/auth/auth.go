@@ -1,10 +1,15 @@
 package auth
 
 import (
+	"database/sql"
+	"errors"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
+	"github.com/elltja/finance-tracker/internal/database"
+	"github.com/elltja/finance-tracker/internal/models"
 	"github.com/gorilla/sessions"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
@@ -72,4 +77,29 @@ func initOAuthProviders() {
 			"profile", "email",
 		),
 	)
+}
+
+func GetCurrentUserId(r *http.Request, Store *sessions.CookieStore) (string, bool) {
+	session, _ := Store.Get(r, CookieSessionKey)
+
+	userId, ok := session.Values["user_id"].(string)
+
+	return userId, ok
+}
+
+var ErrUserUnauthenticated = errors.New("user unauthenticated")
+
+func GetCurrentUser(r *http.Request, Store *sessions.CookieStore, db *sql.DB) (*models.PublicUser, error) {
+
+	userId, ok := GetCurrentUserId(r, Store)
+	if !ok {
+		return nil, ErrUserUnauthenticated
+	}
+
+	user, err := database.GetUser(db, userId)
+
+	if err != nil {
+		return nil, err
+	}
+	return user, nil
 }

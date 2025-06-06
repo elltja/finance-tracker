@@ -3,6 +3,7 @@ package auth
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"os"
@@ -269,24 +270,21 @@ func (h *AuthHandler) OAuthCallbackHandler(ctx *gin.Context) {
 }
 
 func (h *AuthHandler) MeHandler(ctx *gin.Context) {
-	session, _ := h.Store.Get(ctx.Request, CookieSessionKey)
-
-	userId, ok := session.Values["user_id"].(string)
-	if !ok {
-		ctx.JSON(http.StatusUnauthorized, gin.H{
-			"message": "Unauthorized",
-		})
-		return
-	}
-
-	user, err := database.GetUser(h.DB, userId)
+	user, err := GetCurrentUser(ctx.Request, h.Store, h.DB)
 
 	if err != nil {
+		if errors.Is(err, ErrUserUnauthenticated) {
+			ctx.JSON(http.StatusUnauthorized, gin.H{
+				"message": "Unauthorized",
+			})
+			return
+		}
 		fmt.Println("Error getting user: ", err)
 		ctx.JSON(http.StatusInternalServerError, gin.H{
 			"message": "Internal server error",
 		})
 		return
 	}
+
 	ctx.JSON(http.StatusOK, user)
 }
