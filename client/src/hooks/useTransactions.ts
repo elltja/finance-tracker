@@ -13,8 +13,7 @@ async function fetchTransactions(): Promise<
     },
     credentials: "include",
   });
-
-  return res.json();
+  return (await res.json()) ?? [];
 }
 
 export default function useTransactions() {

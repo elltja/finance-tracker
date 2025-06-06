@@ -1,6 +1,8 @@
 import { TransactionDialogTrigger } from "@/components/dashboard/TransactionDialog";
 import DashboardLayout from "@/components/dashboard/Layout";
-import TransactionsTable from "@/components/dashboard/TransactionsTable";
+import TransactionsTable, {
+  TransactionsTableSkeleton,
+} from "@/components/dashboard/TransactionsTable";
 import { useAuth } from "@/context/AuthContext";
 import { capitalize } from "@/utils/capitalize";
 import { useTranslation } from "react-i18next";
@@ -20,9 +22,8 @@ export default function Dashboard() {
         <h1 className="text-xl font-bold">
           {t("dashboard.welcomeMessage", { name: capitalize(user?.name) })}
         </h1>
-
         <TransactionDialogTrigger />
-        <Suspense>
+        <Suspense fallback={<TransactionsTableSkeleton />}>
           <TransactionsTable />
         </Suspense>
       </div>

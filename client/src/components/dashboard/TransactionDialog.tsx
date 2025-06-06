@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import usePersistentState from "@/hooks/usePersistentState";
 import TransactionForm from "./TransactionForm";
 import { useTranslation } from "react-i18next";
+
 export function TransactionDialogTrigger() {
   const [isOpen, setIsOpen] = usePersistentState(
     false,

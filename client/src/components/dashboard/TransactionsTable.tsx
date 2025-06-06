@@ -35,3 +35,30 @@ export default function TransactionsTable() {
     </div>
   );
 }
+
+export function TransactionsTableSkeleton() {
+  return (
+    <div className="overflow-x-auto">
+      <table className="table-fixed w-full max-w-screen min-w-[600px]">
+        <thead>
+          <tr>
+            {COLUMNS.map((_, idx) => (
+              <th key={idx} className="px-4 py-2 bg-gray-100" />
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {[...Array(5)].map((_, rowIdx) => (
+            <tr key={rowIdx} className="animate-pulse">
+              {COLUMNS.map((_, colIdx) => (
+                <td key={colIdx} className="px-4 py-3">
+                  <div className="h-4 bg-gray-200 rounded w-full" />
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
