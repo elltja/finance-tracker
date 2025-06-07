@@ -26,8 +26,6 @@ export default function SignUpForm() {
   const { mutate, data } = useMutation<FormResult, unknown, FormFields>({
     mutationFn: async (data: FormFields): Promise<FormResult> => {
       const { currency, language } = await getLocale();
-      alert(currency + " " + language);
-      console.log({ currency, language });
 
       const res = await fetch(API_URL, {
         method: "POST",

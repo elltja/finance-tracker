@@ -16,4 +16,6 @@ func RegisterRoutes(r *gin.RouterGroup, c Config) {
 	h := NewHandler(c.DB, c.Store)
 
 	r.GET("/all", h.GetAll)
+
+	r.POST("/create", h.Create)
 }

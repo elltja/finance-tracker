@@ -8,8 +8,13 @@ import CategorySelect from "./CategorySelect";
 import TypeSelect from "./TypeSelect";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+const API_URL = `${import.meta.env.VITE_BACKEND_URL}/transactions/create`;
 
 type FormFields = Omit<Transaction, "date">;
+
+type FormResult = { isError: boolean; message: string };
 
 interface TransactionFormProps {
   onClose: () => void;
@@ -22,8 +27,32 @@ export default function TransactionForm({ onClose }: TransactionFormProps) {
   const currency = user?.preferred_currency || "USD";
   const { register, handleSubmit, control } = useForm<FormFields>();
 
+  const queryClient = useQueryClient();
+
+  const { mutate, data } = useMutation({
+    mutationFn: async (data: FormFields): Promise<FormResult> => {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      const result = (await res.json()) as { message: string };
+
+      if (!res.ok) return { ...result, isError: true };
+      return { ...result, isError: false };
+    },
+    onSuccess: () => {
+      queryClient.refetchQueries({ queryKey: ["transactions"] });
+    },
+  });
+
   const onSubmit: SubmitHandler<FormFields> = async (data) => {
-    console.log({ ...data, currency });
+    mutate(data);
+    onClose();
   };
   return (
     <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
@@ -84,6 +113,7 @@ export default function TransactionForm({ onClose }: TransactionFormProps) {
           {...register("amount", { valueAsNumber: true })}
         />
       </div>
+      {data?.isError && <p aria-live="polite">{data.message}</p>}
       <div className="flex gap-2 w-full justify-end mt-2">
         <Button type="button" variant="outline" onClick={onClose}>
           {t("cancel")}
