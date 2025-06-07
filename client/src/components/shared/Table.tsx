@@ -5,11 +5,12 @@ import { useTranslation } from "react-i18next";
 interface TableRowProps {
   items: (string | number)[];
   className?: string;
+  onClick?: () => void;
 }
 
-export function TableRow({ items, className = "" }: TableRowProps) {
+export function TableRow({ items, className = "", onClick }: TableRowProps) {
   return (
-    <tr className={clsx("border-b border-border", className)}>
+    <tr className={clsx("border-b border-border", className)} onClick={onClick}>
       {items.map((item, index) => (
         <td
           key={index}

@@ -3,6 +3,8 @@ import TableTotalRow, { TableHead, TableRow } from "../shared/Table";
 import { useTranslation } from "react-i18next";
 import useTransactions from "@/hooks/useTransactions";
 import { calculateTotal } from "@/utils/calculateTotal";
+import { TransactionDialog } from "./TransactionDialog";
+import { useState } from "react";
 
 const COLUMNS: (keyof Transaction)[] = [
   "name",
@@ -14,30 +16,44 @@ const COLUMNS: (keyof Transaction)[] = [
 ];
 
 export default function TransactionsTable() {
+  const [dialogData, setDialogData] = useState<Transaction | undefined>(
+    undefined
+  );
   const { t } = useTranslation();
   const data = useTransactions();
 
   return (
-    <div className="overflow-x-auto">
-      <table className="table-fixed w-full max-w-screen min-w-[600px]">
-        <TableHead
-          keys={COLUMNS.map((c) => t(`dashboard.table.columns.${c}`))}
-        />
-        <tbody>
-          {data.map((item, index) => (
-            <TableRow
-              key={index}
-              items={COLUMNS.map((col) => item[col])}
-              className="hover:bg-bg-hover"
-            />
-          ))}
-        </tbody>
-        <TableTotalRow
-          colCount={COLUMNS.length}
-          totalAmount={calculateTotal(data)}
-        />
-      </table>
-    </div>
+    <>
+      <div className="overflow-x-auto">
+        <table className="table-fixed w-full">
+          <TableHead
+            keys={COLUMNS.map((c) => t(`dashboard.table.columns.${c}`))}
+          />
+          <tbody>
+            {data.map((item, index) => (
+              <TableRow
+                key={index}
+                items={COLUMNS.map((col) => item[col])}
+                className="hover:bg-bg-hover cursor-pointer"
+                onClick={() => setDialogData(item)}
+              />
+            ))}
+          </tbody>
+          <TableTotalRow
+            colCount={COLUMNS.length}
+            totalAmount={calculateTotal(data)}
+          />
+        </table>
+      </div>
+
+      <TransactionDialog
+        title={"Edit"}
+        subtitle={"Edit transaction " + `"${dialogData?.name}"`}
+        initialData={dialogData}
+        isOpen={dialogData != null}
+        onClose={() => setDialogData(undefined)}
+      />
+    </>
   );
 }
 

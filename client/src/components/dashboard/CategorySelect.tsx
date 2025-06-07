@@ -53,12 +53,14 @@ interface CategorySelectProps {
   name?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
+  defaultValue?: string;
 }
 
 export default function CategorySelect({
   id,
   control,
   name = "category",
+  defaultValue,
 }: CategorySelectProps) {
   return (
     <Controller
@@ -73,6 +75,7 @@ export default function CategorySelect({
           inputId={id}
           value={options.find((o) => o.value === field.value)}
           onChange={(val) => field.onChange(val?.value)}
+          defaultValue={options.find((o) => o.value === defaultValue) ?? null}
         />
       )}
     />

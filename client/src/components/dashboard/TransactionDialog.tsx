@@ -1,26 +1,27 @@
-import Button from "../shared/Button";
-import { Plus } from "lucide-react";
-import usePersistentState from "@/hooks/usePersistentState";
 import TransactionForm from "./TransactionForm";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import { Transaction } from "@/types/transaction";
 
-export function TransactionDialogTrigger() {
-  const [isOpen, setIsOpen] = usePersistentState(
-    false,
-    "transaction-dialog-state"
-  );
-  const { t } = useTranslation();
+interface TransactionDialogTriggerProps {
+  children: (open: () => void) => React.ReactNode;
+  initialData?: Transaction;
+}
+
+export function TransactionDialogTrigger({
+  children,
+  initialData,
+}: TransactionDialogTriggerProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <>
-      <Button
-        aria-haspopup="dialog"
-        className="w-fit px-4 flex items-center gap-1"
-        aria-label="Open transaction dialog"
-        onClick={() => setIsOpen(true)}
-      >
-        {t("dashboard.addTransaction")} <Plus className="size-5" />
-      </Button>
-      <TransactionDialog isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      {children(() => setIsOpen(true))}
+      <TransactionDialog
+        initialData={initialData}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      />
     </>
   );
 }
@@ -28,9 +29,18 @@ export function TransactionDialogTrigger() {
 interface TransactionDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  initialData?: Transaction;
+  title?: string;
+  subtitle?: string;
 }
 
-export function TransactionDialog({ isOpen, onClose }: TransactionDialogProps) {
+export function TransactionDialog({
+  isOpen,
+  onClose,
+  initialData,
+  title,
+  subtitle,
+}: TransactionDialogProps) {
   const { t } = useTranslation();
 
   if (!isOpen) return null;
@@ -48,11 +58,11 @@ export function TransactionDialog({ isOpen, onClose }: TransactionDialogProps) {
       >
         <header className="mb-2">
           <h2 className="font-semibold text-lg">
-            {t("dashboard.addTransaction")}
+            {title || t("dashboard.addTransaction")}
           </h2>
-          <p>{t("dashboard.addTransactionDialog.description")}</p>
+          <p>{subtitle || t("dashboard.addTransactionDialog.description")}</p>
         </header>
-        <TransactionForm onClose={onClose} />
+        <TransactionForm onClose={onClose} initialData={initialData} />
       </div>
     </div>
   );

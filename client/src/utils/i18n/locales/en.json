@@ -5,7 +5,8 @@
     "addTransactionDialog": {
       "description": "Add an expense or income",
       "amountInCurrency": "Amount in {{currency}}",
-      "changeCurrency": "change currency"
+      "changeCurrency": "change currency",
+      "delete": "Delete"
     },
     "table": {
       "columns": {

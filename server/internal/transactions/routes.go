@@ -18,4 +18,8 @@ func RegisterRoutes(r *gin.RouterGroup, c Config) {
 	r.GET("/all", h.GetAll)
 
 	r.POST("/create", h.Create)
+
+	r.PUT("/update", h.Update)
+
+	r.DELETE("/delete", h.Delete)
 }

@@ -2,6 +2,7 @@ package database
 
 import (
 	"database/sql"
+	"fmt"
 
 	"github.com/elltja/finance-tracker/internal/models"
 )
@@ -59,4 +60,40 @@ func CreateTransaction(db *sql.DB, userId string, data TransactionData) error {
 	}
 
 	return nil
+}
+
+func UpdateTransaction(db *sql.DB, id string, data TransactionData) error {
+	query := `UPDATE transactions 
+				SET name = $1, description = $2, amount = $3, type = $4, category = $5
+				WHERE id = $6`
+	_, err := db.Exec(query, data.Name, data.Description, data.Amount, data.Type, data.Category, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteTransaction(db *sql.DB, id string) error {
+	query := `DELETE FROM transactions WHERE id = $1`
+	_, err := db.Exec(query, id)
+	return err
+}
+
+func CanMutateTransaction(db *sql.DB, userId string, transactionId string) bool {
+	if transactionId == "" {
+		fmt.Println("Empty transaction ID")
+		return false
+	}
+
+	query := `SELECT user_id FROM transactions WHERE id = $1`
+	row := db.QueryRow(query, transactionId)
+
+	var ownerId string
+	if err := row.Scan(&ownerId); err != nil {
+		fmt.Println("Query error:", err)
+		return false
+	}
+
+	return ownerId == userId
 }

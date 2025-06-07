@@ -19,12 +19,14 @@ interface TypeSelectProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: Control<any>;
   name?: string;
+  defaultValue?: "income" | "expense";
 }
 
 export default function TypeSelect({
   id,
   control,
   name = "type",
+  defaultValue,
 }: TypeSelectProps) {
   return (
     <Controller
@@ -40,6 +42,9 @@ export default function TypeSelect({
           onChange={(val) => field.onChange(val?.value)}
           isSearchable={false}
           className="w-full"
+          defaultValue={options.find(
+            (o) => o.value === (defaultValue ?? "income")
+          )}
         />
       )}
     />

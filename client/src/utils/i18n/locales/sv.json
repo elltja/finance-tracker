@@ -5,7 +5,8 @@
     "addTransactionDialog": {
       "description": "Lägg till en kostnad eller inkomst",
       "amountInCurrency": "Summa i {{currency}}",
-      "changeCurrency": "välj en annan valuta"
+      "changeCurrency": "välj en annan valuta",
+      "delete": "Ta bort"
     },
     "table": {
       "columns": {

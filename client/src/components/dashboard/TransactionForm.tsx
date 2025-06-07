@@ -9,8 +9,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import TypeSelect from "./TypeSelect";
-
-const API_URL = `${import.meta.env.VITE_BACKEND_URL}/transactions/create`;
+import DeleteTransactionButton from "./DeleteTransactionButton";
 
 type FormFields = Omit<Transaction, "date">;
 
@@ -18,9 +17,13 @@ type FormResult = { isError: boolean; message: string };
 
 interface TransactionFormProps {
   onClose: () => void;
+  initialData?: Transaction;
 }
 
-export default function TransactionForm({ onClose }: TransactionFormProps) {
+export default function TransactionForm({
+  onClose,
+  initialData,
+}: TransactionFormProps) {
   const id = useId();
   const { t } = useTranslation();
   const { user } = useAuth();
@@ -31,9 +34,20 @@ export default function TransactionForm({ onClose }: TransactionFormProps) {
 
   const { mutate, data } = useMutation({
     mutationFn: async (data: FormFields): Promise<FormResult> => {
-      const res = await fetch(API_URL, {
-        method: "POST",
-        body: JSON.stringify(data),
+      const apiUrl =
+        initialData == null
+          ? `${import.meta.env.VITE_BACKEND_URL}/transactions/create`
+          : `${import.meta.env.VITE_BACKEND_URL}/transactions/update`;
+
+      const method = initialData == null ? "POST" : "PUT";
+
+      if (initialData != null) {
+        data = { ...data, id: initialData.id };
+      }
+
+      const res = await fetch(apiUrl, {
+        method,
+        body: JSON.stringify({ ...data, id: initialData?.id }),
         headers: {
           "Content-Type": "application/json",
         },
@@ -66,6 +80,7 @@ export default function TransactionForm({ onClose }: TransactionFormProps) {
           placeholder="T-shirt"
           autoComplete="off"
           aria-required
+          defaultValue={initialData?.name ?? ""}
           {...register("name")}
         />
       </div>
@@ -79,6 +94,7 @@ export default function TransactionForm({ onClose }: TransactionFormProps) {
           Icon={Text}
           placeholder="Buy t-shirt for summer"
           autoComplete="off"
+          defaultValue={initialData?.description ?? ""}
           {...register("description")}
         />
       </div>
@@ -86,7 +102,11 @@ export default function TransactionForm({ onClose }: TransactionFormProps) {
         <label htmlFor={`category-select-${id}`}>
           {t("dashboard.table.columns.category")}
         </label>
-        <CategorySelect id={`category-select-${id}`} control={control} />
+        <CategorySelect
+          id={`category-select-${id}`}
+          control={control}
+          defaultValue={initialData?.category}
+        />
       </div>
       <div>
         <label htmlFor={`type-select-${id}`}>
@@ -110,6 +130,7 @@ export default function TransactionForm({ onClose }: TransactionFormProps) {
           inputMode="decimal"
           autoComplete="off"
           placeholder="$0.00"
+          defaultValue={initialData?.amount}
           {...register("amount", { valueAsNumber: true })}
         />
       </div>
@@ -118,6 +139,12 @@ export default function TransactionForm({ onClose }: TransactionFormProps) {
         <Button type="button" variant="outline" onClick={onClose}>
           {t("cancel")}
         </Button>
+        {initialData?.id && (
+          <DeleteTransactionButton
+            transactionId={initialData.id}
+            onClose={onClose}
+          />
+        )}
         <Button type="submit" className="px-3">
           {t("submit")}
         </Button>
