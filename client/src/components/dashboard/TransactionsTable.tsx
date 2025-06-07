@@ -1,7 +1,8 @@
 import { Transaction } from "@/types/transaction";
-import { TableHead, TableRow } from "../shared/Table";
+import TableTotalRow, { TableHead, TableRow } from "../shared/Table";
 import { useTranslation } from "react-i18next";
 import useTransactions from "@/hooks/useTransactions";
+import { calculateTotal } from "@/utils/calculateTotal";
 
 const COLUMNS: (keyof Transaction)[] = [
   "name",
@@ -31,6 +32,10 @@ export default function TransactionsTable() {
             />
           ))}
         </tbody>
+        <TableTotalRow
+          colCount={COLUMNS.length}
+          totalAmount={calculateTotal(data)}
+        />
       </table>
     </div>
   );

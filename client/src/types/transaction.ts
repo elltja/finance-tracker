@@ -1,4 +1,4 @@
-export type TransactionType = "fixed" | "recurring";
+export type TransactionType = "income" | "expense";
 
 export type Transaction = {
   name: string;

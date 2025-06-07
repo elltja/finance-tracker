@@ -1,16 +1,17 @@
-import { CalendarCheck, LucideProps, Repeat } from "lucide-react";
+import { LucideProps } from "lucide-react";
 import Select from "../shared/Select";
 import { Controller, Control } from "react-hook-form";
+import { ArrowDownCircle, ArrowUpCircle } from "lucide-react";
 
 type OptionType = {
-  value: "fixed" | "recurring";
+  value: "income" | "expense";
   label: string;
   icon: React.ComponentType<LucideProps>;
 };
 
 const options: OptionType[] = [
-  { value: "fixed", label: "Fixed", icon: CalendarCheck },
-  { value: "recurring", label: "Recurring", icon: Repeat },
+  { value: "income", label: "Income", icon: ArrowUpCircle },
+  { value: "expense", label: "Expense", icon: ArrowDownCircle },
 ];
 
 interface TypeSelectProps {

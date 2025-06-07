@@ -14,7 +14,8 @@
         "type": "Typ",
         "date": "Datum",
         "category": "Kategori",
-        "amount": "Summa"
+        "amount": "Summa",
+        "total": "Totalt"
       }
     }
   },

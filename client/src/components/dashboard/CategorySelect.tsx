@@ -1,10 +1,25 @@
 import { capitalize } from "@/utils/capitalize";
-import { LucideProps, Pizza, Shirt, Star } from "lucide-react";
+import {
+  Car,
+  Heart,
+  List,
+  LucideProps,
+  Pizza,
+  Shirt,
+  Star,
+} from "lucide-react";
 import React from "react";
 import Select from "../shared/Select";
 import { Control, Controller } from "react-hook-form";
 
-const categories: string[] = ["clothes", "food", "custom"];
+const categories: string[] = [
+  "clothes",
+  "food",
+  "transportation",
+  "health",
+  "entertainment",
+  "other",
+];
 
 type OptionType = {
   value: string;
@@ -21,8 +36,14 @@ const options: OptionType[] = categories.map((category) => ({
         return Shirt;
       case "food":
         return Pizza;
-      default:
+      case "transportation":
+        return Car;
+      case "health":
+        return Heart;
+      case "entertainment":
         return Star;
+      default:
+        return List;
     }
   })(),
 }));

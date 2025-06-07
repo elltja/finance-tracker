@@ -15,7 +15,8 @@
         "date": "Date",
         "category": "Category",
         "amount": "Amount"
-      }
+      },
+      "total": "Total"
     }
   },
   "auth": {

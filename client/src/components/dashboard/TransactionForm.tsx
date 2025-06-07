@@ -5,10 +5,10 @@ import { Badge, Coins, DollarSign, Text } from "lucide-react";
 import { useId } from "react";
 import Button from "../shared/Button";
 import CategorySelect from "./CategorySelect";
-import TypeSelect from "./TypeSelect";
 import { useAuth } from "@/context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import TypeSelect from "./TypeSelect";
 
 const API_URL = `${import.meta.env.VITE_BACKEND_URL}/transactions/create`;
 
@@ -83,16 +83,16 @@ export default function TransactionForm({ onClose }: TransactionFormProps) {
         />
       </div>
       <div>
-        <label htmlFor={`type-select-${id}`}>
-          {t("dashboard.table.columns.type")}
-        </label>
-        <TypeSelect id={`type-select-${id}`} control={control} />
-      </div>
-      <div>
         <label htmlFor={`category-select-${id}`}>
           {t("dashboard.table.columns.category")}
         </label>
         <CategorySelect id={`category-select-${id}`} control={control} />
+      </div>
+      <div>
+        <label htmlFor={`type-select-${id}`}>
+          {t("dashboard.table.columns.type")}
+        </label>
+        <TypeSelect id={`type-select-${id}`} control={control} />
       </div>
       <div>
         <label htmlFor={`amount-${id}`}>
